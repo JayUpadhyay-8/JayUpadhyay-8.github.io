@@ -1,0 +1,49 @@
+.hover-5 {
+  display: inline-block;
+  overflow: hidden;
+}
+.hover-5:before, .hover-5:after {
+  right: 0;
+  bottom: 0;
+  background: #492059;
+}
+.hover-5:before {
+  width: 100%;
+  height: 2px;
+  transform: translateX(-100%);
+}
+.hover-5:after {
+  width: 2px;
+  height: 100%;
+  transform: translateY(100%);
+}
+.hover-5 > span {
+  display: flex;
+  padding: 10px;
+}
+.hover-5 > span:before, .hover-5 > span:after {
+  left: 0;
+  top: 0;
+  background: #492059;
+}
+.hover-5 > span:before {
+  width: 100%;
+  height: 2px;
+  transform: translateX(100%);
+}
+.hover-5 > span:after {
+  width: 2px;
+  height: 100%;
+  transform: translateY(-100%);
+}
+.hover-5:hover:before, .hover-5:hover:after, .hover-5:hover > span:before, .hover-5:hover > span:after {
+  transform: translate(0, 0);
+}
+a:before, a:after, a > span:before, a > span:after {
+  content: '';
+  position: absolute;
+  transition: transform .5s ease;
+}
+.hoverline{
+	
+}

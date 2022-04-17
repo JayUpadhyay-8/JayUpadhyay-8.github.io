@@ -1,0 +1,89 @@
+.HeaderContainer {
+  width: 450px;
+  overflow: hidden;
+}
+
+svg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  z-index: 2;
+  opacity: 0.5;
+}
+
+.HeaderOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  z-index: 3;
+  opacity: 1;
+  mix-blend-mode: multiply;
+  background: #9236ff;
+  background: linear-gradient(135deg, #9236ff 0%, #f763c6 33%, #ff9292 66%, #fff7e1 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#9236ff", endColorstr="#fff7e1",GradientType=1 );
+}
+
+.cls-1, .cls-4 {
+  -webkit-animation: r-rotate 2s infinite alternate;
+          animation: r-rotate 2s infinite alternate;
+  transform-origin: 100% 100%;
+}
+
+.cls-2, .cls-3 {
+  -webkit-animation: l-rotate 2s infinite alternate;
+          animation: l-rotate 2s infinite alternate;
+  transform-origin: 100% 0%;
+}
+
+.cls-2, .cls-4 {
+  -webkit-animation-delay: 0.5s;
+          animation-delay: 0.5s;
+}
+
+.l {
+  stroke: #F72CAA;
+  fill: #F72CAA;
+  -webkit-animation: l-rotate 2s alternate infinite;
+          animation: l-rotate 2s alternate infinite;
+  transform-origin: 100% 0%;
+}
+
+@-webkit-keyframes r-rotate {
+  from {
+    transform: rotate(270deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes r-rotate {
+  from {
+    transform: rotate(270deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes l-rotate {
+  from {
+    transform: rotate(270deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes l-rotate {
+  from {
+    transform: rotate(270deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
