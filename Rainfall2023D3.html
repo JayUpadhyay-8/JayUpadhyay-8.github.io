@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bar Chart</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    .bar {
+      fill: steelblue;
+    }
+
+    .bar:hover {
+      fill: orange;
+    }
+
+    .axis {
+      font-size: 12px;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <svg width="800" height="600"></svg>
+
+  <script>
+    const data = [
+      { site: 'South End', inches: 53.59 },
+      { site: 'Roslindale', inches: 57.66 },
+      { site: 'Dorchester', inches: 54.68 },
+      { site: 'Allston', inches: 55.2 },
+      { site: 'Hyde Park', inches: 54.53 },
+      { site: 'Mattapan', inches: 55.16 },
+      { site: 'Charlestown', inches: 49.77 },
+      { site: 'Fenway', inches: 55.36 },
+      { site: 'East Boston', inches: 50.47 },
+      { site: 'Roxbury', inches: 48.47 }
+    ];
+
+    const margin = { top: 20, right: 20, bottom: 70, left: 40 };
+    const width = 800 - margin.left - margin.right;
+    const height = 600 - margin.top - margin.bottom;
+
+    const svg = d3.select('svg')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+    const x = d3.scaleBand()
+      .range([0, width])
+      .domain(data.map(d => d.site))
+      .padding(0.1);
+
+    const y = d3.scaleLinear()
+      .range([height, 0])
+      .domain([0, d3.max(data, d => d.inches)]);
+
+    svg.append('g')
+      .attr('transform', `translate(0, ${height})`)
+      .call(d3.axisBottom(x))
+      .selectAll('text')
+      .attr('transform', 'rotate(-45)')
+      .style('text-anchor', 'end');
+
+    svg.append('g')
+      .call(d3.axisLeft(y));
+
+    svg.selectAll('.bar')
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('x', d => x(d.site))
+      .attr('width', x.bandwidth())
+      .attr('y', d => y(d.inches))
+      .attr('height', d => height - y(d.inches));
+  </script>
+</body>
+</html>
