@@ -14,7 +14,7 @@
             "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
             "description": "A choropleth map of Massachusetts showing solar panel installations.",
             "data": {
-                "url": "project-sunroof-state.csv", // Make sure to provide the path to your CSV file
+                "url": "MassMap/project-sunroof-state.csv", // Make sure to provide the path to your CSV file
                 "format": {
                     "type": "csv"
                 }
@@ -24,7 +24,7 @@
                     "lookup": "region_name",
                     "from": {
                         "data": {
-                            "url": "massachusetts.geojson", // Path to the Massachusetts GeoJSON
+                            "url": "MassMap/massachusetts.geojson", // Path to the Massachusetts GeoJSON
                             "format": {
                                 "type": "topojson",
                                 "feature": "counties" // Ensure this matches the object name in your GeoJSON
