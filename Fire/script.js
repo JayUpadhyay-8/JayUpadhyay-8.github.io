@@ -1,6 +1,6 @@
 // Function to fetch GeoJSON
 async function fetchGeoJSON() {
-    const response = await fetch('Fire\massachusetts.geojson');
+    const response = await fetch('https://github.com/JayUpadhyay-8/JayUpadhyay-8.github.io/tree/main/Fire/massachusetts.geojson');
     return await response.json();
 }
 
