@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Massachusetts Solar Panel Installations</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+    <div id="vis"></div>
+    <script>
+        var spec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "description": "A choropleth map of Massachusetts showing solar panel installations.",
+            "data": {
+                "url": "project-sunroof-state.csv", // Make sure to provide the path to your CSV file
+                "format": {
+                    "type": "csv"
+                }
+            },
+            "transform": [
+                {
+                    "lookup": "region_name",
+                    "from": {
+                        "data": {
+                            "url": "massachusetts.geojson", // Path to the Massachusetts GeoJSON
+                            "format": {
+                                "type": "topojson",
+                                "feature": "counties" // Ensure this matches the object name in your GeoJSON
+                            }
+                        },
+                        "key": "properties.NAME", // Adjust this depending on your GeoJSON properties
+                        "fields": ["solar_installations"] // Your data field/column name
+                    }
+                }
+            ],
+            "projection": {
+                "type": "mercator"
+            },
+            "mark": "geoshape",
+            "encoding": {
+                "color": {
+                    "field": "solar_installations",
+                    "type": "quantitative",
+                    "title": "Number of Solar Installations"
+                },
+                "tooltip": [
+                    {"field": "region_name", "type": "nominal", "title": "County"},
+                    {"field": "solar_installations", "type": "quantitative", "title": "Solar Installations"}
+                ]
+            },
+            "width": 800,
+            "height": 600
+        };
+
+        vegaEmbed('#vis', spec);
+    </script>
+</body>
+</html>
