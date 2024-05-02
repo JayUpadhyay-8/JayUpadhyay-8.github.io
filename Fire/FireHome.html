@@ -3,13 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Massachusetts Fire Incident Reporting</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <title>Fire Incident Data Charts</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div id="map" style="height: 500px;"></div>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="script.js"></script>
+    <h1>Fire Incident Data Visualizations</h1>
+    <div>
+        <canvas id="incidentTypeChart"></canvas>
+    </div>
+    <div>
+        <canvas id="districtChart"></canvas>
+    </div>
+    <script src="chart-script.js"></script>
 </body>
 </html>
