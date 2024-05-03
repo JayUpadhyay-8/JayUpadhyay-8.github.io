@@ -1,51 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Boston Fire Hydrants Map</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <title>Boston Fire Hydrants Map</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://d3js.org/d3-geo.v2.min.js"></script>
     <style>
-        #map { height: 600px; }
+        #map {
+            width: 800px;
+            height: 600px;
+        }
     </style>
 </head>
 <body>
     <h1>Boston Fire Hydrants Map</h1>
-    <div id="map"></div>
+    <svg id="map"></svg>
     <script>
-        // Initialize the map
-        var map = L.map('map').setView([42.3601, -71.0589], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        const svg = d3.select("#map"),
+            width = +svg.attr("width"),
+            height = +svg.attr("height");
 
-        // Function to fetch data and add markers
-        function fetchData() {
-            // Using a CORS proxy to avoid CORS restrictions
-            var corsProxy = 'https://cors-anywhere.herokuapp.com/';
-            var apiUrl = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "1479a183-dde0-46a6-a828-f526df010a03"`;
-            var url =apiUrl;
+        const projection = d3.geoMercator()
+                             .center([-71.0589, 42.3601]) // Longitude and latitude of Boston
+                             .scale(100000) // Scale for zooming into the city
+                             .translate([width / 2, height / 2]);
 
-            fetch(url)
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
-                    var records = data.result.records;
-                    records.forEach(function(record) {
-                        var lat = record.Latitude;
-                        var lon = record.Longitude;
-                        var popupContent = "Hydrant ID: " + record._id + "<br>Location: " + record.PLACEMENT_;
-                        L.marker([lat, lon]).addTo(map).bindPopup(popupContent);
-                    });
-                })
-                .catch(function(error) {
-                    console.error('Error fetching data: ', error);
-                });
-        }
+        const path = d3.geoPath().projection(projection);
 
-        // Call the function to fetch data when the script loads
-        fetchData();
+        // Fetch data from Boston Data API
+        d3.json("https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from \"1479a183-dde0-46a6-a828-f526df010a03\"")
+            .then(data => {
+                const hydrants = data.result.records;
+                svg.selectAll("circle")
+                   .data(hydrants)
+                   .enter()
+                   .append("circle")
+                   .attr("cx", d => projection([d.Longitude, d.Latitude])[0])
+                   .attr("cy", d => projection([d.Longitude, d.Latitude])[1])
+                   .attr("r", 5)
+                   .style("fill", "red")
+                   .append("title") // Tooltip to show details on hover
+                   .text(d => `ID: ${d._id}, Location: ${d.PLACEMENT_}`);
+            })
+            .catch(err => console.error('Error loading the map data:', err));
+
+        // Optionally, add a map of Boston using d3.geoPath if you have GeoJSON data for Boston
     </script>
 </body>
 </html>
