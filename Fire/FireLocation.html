@@ -24,7 +24,7 @@
             // Using a CORS proxy to avoid CORS restrictions
             var corsProxy = 'https://cors-anywhere.herokuapp.com/';
             var apiUrl = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "1479a183-dde0-46a6-a828-f526df010a03"`;
-            var url = corsProxy + apiUrl;
+            var url =apiUrl;
 
             fetch(url)
                 .then(function(response) {
