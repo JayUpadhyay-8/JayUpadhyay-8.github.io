@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Boston Fire Hydrants Map</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map { height: 600px; }
+    </style>
+</head>
+<body>
+    <h1>Boston Fire Hydrants Map</h1>
+    <div id="map"></div>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([42.3601, -71.0589], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Function to fetch data and add markers
+        function fetchData() {
+            // Using a CORS proxy to avoid CORS restrictions
+            var corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            var apiUrl = "https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from \"1479a183-dde0-46a6-a828-f526df010a03\"";
+            var url = corsProxy + apiUrl;
+
+            fetch(url)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var records = data.result.records;
+                    records.forEach(function(record) {
+                        var lat = record.Latitude;
+                        var lon = record.Longitude;
+                        var popupContent = "Hydrant ID: " + record._id + "<br>Location: " + record.PLACEMENT_;
+                        L.marker([lat, lon]).addTo(map).bindPopup(popupContent);
+                    });
+                })
+                .catch(function(error) {
+                    console.error('Error fetching data: ', error);
+                });
+        }
+
+        // Call the function to fetch data when the script loads
+        fetchData();
+    </script>
+</body>
+</html>
