@@ -41,7 +41,7 @@
         document.getElementById('yearSelect').addEventListener('change', function() {
             var year = this.value;
             if (year) {
-                var sqlQuery = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03" WHERE MANUFACTUR = '${year}'`);
+                var sqlQuery = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03" WHERE "MANUFACTUR" LIKE '${year}'`);
                 axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${sqlQuery}`)
                     .then(function(response) {
                         addMarkers(response.data.result.records);
