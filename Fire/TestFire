@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boston Fire Safety Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.2/dist/tailwind.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+        .header, .footer {
+            background-color: #111;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .section {
+            padding: 40px 20px;
+        }
+        #mapid, #choroplethMap, #map {
+            height: 500px;
+            margin-top: 20px;
+        }
+        #mapid {
+            height: 600px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <header class="header">
+        <h1 class="text-3xl font-bold">Boston Fire Safety Dashboard</h1>
+        <p>Explore fire incidents, department locations, and hydrant placements in Boston</p>
+    </header>
+
+    <section class="section bg-white">
+        <h2 class="text-2xl font-semibold">Introduction</h2>
+        <p class="mt-4">Welcome to "Boston Fires," an interactive web app designed to educate and prepare you for fire safety. Through this journey, you will explore fire incidents in Boston, understand the strategic placement of fire departments and hydrants, and gain valuable knowledge to combat fire hazards.</p>
+    </section>
+
+    <section class="section">
+        <h2 class="text-2xl font-semibold">Fire Incidents</h2>
+        <div>
+            <canvas id="incidentTypeChart"></canvas>
+        </div>
+        <div>
+            <canvas id="districtChart"></canvas>
+        </div>
+        <div id="choroplethMap"></div>
+    </section>
+
+    <section class="section bg-white">
+        <h2 class="text-2xl font-semibold">Fire Departments</h2>
+        <div id="mapid"></div>
+    </section>
+
+    <section class="section">
+        <h2 class="text-2xl font-semibold">Fire Hydrants</h2>
+        <svg id="map"></svg>
+    </section>
+
+    <section class="section bg-white">
+        <h2 class="text-2xl font-semibold">Test Your Fire Safety Knowledge!</h2>
+        <div id="quiz-section" class="mt-4">
+            <div id="quiz"></div>
+            <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onclick="submitQuiz()">Submit</button>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>Contact Information | Additional Resources</p>
+    </footer>
+
+    <script>
+        // Fire Hydrants Map using Leaflet
+        var map = L.map('mapid').setView([42.3601, -71.0589], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+            maxZoom: 18,
+        }).addTo(map);
+
+        var markers = L.layerGroup().addTo(map);
+
+        function addMarkers(data) {
+            markers.clearLayers();
+            data.forEach(function(hydrant) {
+                var marker = L.marker([hydrant.Y, hydrant.X]).bindPopup(
+                    'Hydrant ID: ' + hydrant._id + '<br>' +
+                    'Address: ' + hydrant.ADDRESS_NU + ' ' + hydrant.STREET_FEA
+                );
+                markers.addLayer(marker);
+            });
+        }
+
+        document.getElementById('yearSelect').addEventListener('change', function() {
+            var year = this.value;
+            if (year) {
+                var sqlQuery = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03" WHERE "MANUFACTUR" LIKE '${year}'`);
+                axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${sqlQuery}`)
+                    .then(function(response) {
+                        addMarkers(response.data.result.records);
+                    })
+                    .catch(function(error) {
+                        console.error('Error fetching data:', error);
+                    });
+            } else {
+                markers.clearLayers();
+            }
+        });
+
+        // Initially fetch all data to populate year dropdown
+        var initialSql = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03"`);
+        axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${initialSql}`)
+            .then(function(response) {
+                // Populate year dropdown from unique years in data
+                var years = [...new Set(response.data.result.records.map(h => h.MANUFACTUR))];
+                var select = document.getElementById('yearSelect');
+                years.forEach(function(year) {
+                    var option = document.createElement('option');
+                    option.value = year;
+                    option.text = year;
+                    select.appendChild(option);
+                });
+            })
+            .catch(function(error) {
+                console.error('Error initializing data:', error);
+            });
+
+        // Function to fetch data
+        async function fetchData(sqlQuery) {
+            const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=${encodeURIComponent(sqlQuery)}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            return data.result.records;
+        }
+
+        // Function to process data for a chart
+        function processData(records, key) {
+            const counts = {};
+            records.forEach(record => {
+                if (record[key]) {
+                    counts[record[key]] = (counts[record[key]] || 0) + 1;
+                }
+            });
+            return counts;
+        }
+
+        // Function to create a chart
+        function createChart(ctx, title, labels, data) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: title,
+                        data: data,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function setupQuiz() {
+            const quiz = document.getElementById('quiz');
+            quiz.innerHTML = '<p>What should you do if your clothes catch fire?</p>' +
+                             '<input type="radio" id="stop" name="fire" value="stop"><label for="stop">Stop, Drop, and Roll</label><br>' +
+                             '<input type="radio" id="run" name="fire" value="run"><label for="run">Run</label><br>';
+        }
+
+        function submitQuiz() {
+            const answer = document.querySelector('input[name="fire"]:checked').value;
+            alert(answer === "stop" ? "Correct!" : "Oops! The right answer is Stop, Drop, and Roll.");
+        }
+
+        // Main function to render charts
+        async function renderCharts() {
+            const incidentTypeSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "incident_description" IS NOT NULL`;
+            const districtSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "district" IS NOT NULL`;
+
+            // Incident Type Chart
+            const incidentRecords = await fetchData(incidentTypeSql);
+            const incidentTypeCounts = processData(incidentRecords, 'incident_description');
+            const incidentTypeCtx = document.getElementById('incidentTypeChart').getContext('2d');
+            createChart(incidentTypeCtx, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+
+            // District Chart
+            const districtRecords = await fetchData(districtSql);
+            const districtCounts = processData(districtRecords, 'district');
+            const districtCtx = document.getElementById('districtChart').getContext('2d');
+            createChart(districtCtx, 'Incidents by District', Object.keys(districtCounts), Object.values(districtCounts));
+        }
+
+        renderCharts();
+        document.onload = setupQuiz();
+
+        // D3.js Map for Fire Hydrants
+        const svg = d3.select("#map").attr("width", 800).attr("height", 600);
+        const projection = d3.geoMercator()
+                             .center([-71.0589, 42.3601]) // Longitude and latitude of Boston
+                             .scale(100000) // Scale for zooming into the city
+                             .translate([400, 300]);
+
+        const path = d3.geoPath().projection(projection);
+
+        // Fetch data from Boston Data API
+        d3.json(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "1479a183-dde0-46a6-a828-f526df010a03"`)
+            .then(data => {
+                const hydrants = data.result.records;
+                hydrants.forEach(d => {
+                    if (!isNaN(parseFloat(d.Longitude)) && !isNaN(parseFloat(d.Latitude))) {
+                        svg.append("circle")
+                           .attr("cx", projection([parseFloat(d.Longitude), parseFloat(d.Latitude)])[0])
+                           .attr("cy", projection([parseFloat(d.Longitude), parseFloat(d.Latitude)])[1])
+                           .attr("r", 5)
+                           .style("fill", "red")
+                           .append("title")
+                           .text(`ID: ${d._id}, Location: ${d.PLACEMENT_}`);
+                    }
+                });
+            })
+            .catch(err => console.error('Error loading the map data:', err));
+    </script>
+</body>
+</html>
