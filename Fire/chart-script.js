@@ -72,32 +72,18 @@ function createPieChart(ctx, title, labels, data) {
     });
 }
 
-// Function to create a doughnut chart
-function createDoughnutChart(ctx, title, labels, data) {
+// Function to create a line chart
+function createLineChart(ctx, title, labels, data) {
     new Chart(ctx, {
-        type: 'doughnut',
+        type: 'line',
         data: {
             labels: labels,
             datasets: [{
                 label: title,
                 data: data,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
+                fill: false,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                tension: 0.1
             }]
         }
     });
@@ -122,7 +108,7 @@ async function renderCharts() {
     const incidentTypeSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "incident_description" IS NOT NULL`;
     const districtSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "district" IS NOT NULL`;
     const neighborhoodSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "neighborhood" IS NOT NULL`;
-    const propertyUseSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "property_use" IS NOT NULL`;
+    const fireIncidentSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "incident_type" LIKE '1%'`;
 
     // Incident Type Chart
     const incidentRecords = await fetchData(incidentTypeSql);
@@ -142,11 +128,11 @@ async function renderCharts() {
     const neighborhoodCtx = document.getElementById('neighborhoodPieChart').getContext('2d');
     createPieChart(neighborhoodCtx, 'Incidents by Neighborhood', Object.keys(neighborhoodCounts), Object.values(neighborhoodCounts));
 
-    // Property Use Doughnut Chart
-    const propertyUseRecords = await fetchData(propertyUseSql);
-    const propertyUseCounts = processData(propertyUseRecords, 'property_use');
-    const propertyUseCtx = document.getElementById('propertyUseDoughnutChart').getContext('2d');
-    createDoughnutChart(propertyUseCtx, 'Incidents by Property Use', Object.keys(propertyUseCounts), Object.values(propertyUseCounts));
+    // Fire Incident Line Chart
+    const fireIncidentRecords = await fetchData(fireIncidentSql);
+    const fireIncidentCounts = processData(fireIncidentRecords, 'alarm_date');
+    const fireIncidentCtx = document.getElementById('fireIncidentLineChart').getContext('2d');
+    createLineChart(fireIncidentCtx, 'Fire Incidents Over Time', Object.keys(fireIncidentCounts), Object.values(fireIncidentCounts));
 
     setupQuiz();
 }
