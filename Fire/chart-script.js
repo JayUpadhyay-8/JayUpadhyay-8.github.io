@@ -79,28 +79,72 @@ function submitQuiz() {
     alert(answer === "stop" ? "Correct!" : "Oops! The right answer is Stop, Drop, and Roll.");
 }
 
+// Function to fetch data
+async function fetchData(sqlQuery) {
+    const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=${encodeURIComponent(sqlQuery)}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.result.records;
+}
+
+// Function to process data for a chart
+function processData(records) {
+    const incidentTypes = {};
+    records.forEach(record => {
+        const incidentType = record['incident_description'];
+        const district = record['district'];
+
+        if (!incidentTypes[incidentType]) {
+            incidentTypes[incidentType] = {};
+        }
+
+        if (incidentTypes[incidentType][district]) {
+            incidentTypes[incidentType][district] += 1;
+        } else {
+            incidentTypes[incidentType][district] = 1;
+        }
+    });
+
+    const labels = Object.keys(incidentTypes);
+    const datasets = Object.keys(incidentTypes[labels[0]]).map(district => {
+        return {
+            label: district,
+            data: labels.map(incident => incidentTypes[incident][district] || 0),
+            backgroundColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.2)`,
+            borderColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 1)`,
+            borderWidth: 1
+        };
+    });
+
+    return { labels, datasets };
+}
+
+// Function to create a radar chart
+function createRadarChart(ctx, title, labels, datasets) {
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            scales: {
+                r: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
 // Main function to render charts
 async function renderCharts() {
-    const incidentTypeSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "incident_description" IS NOT NULL`;
-    const districtSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "district" IS NOT NULL`;
+    const sqlQuery = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "incident_description" IS NOT NULL AND "district" IS NOT NULL`;
+    const records = await fetchData(sqlQuery);
+    const { labels, datasets } = processData(records);
 
-    // Incident Type Chart
-    const incidentRecords = await fetchData(incidentTypeSql);
-    const incidentTypeCounts = processData(incidentRecords, 'incident_description');
-    const incidentTypeCtx = document.getElementById('incidentTypeChart').getContext('2d');
-    createBarChart(incidentTypeCtx, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
-
-    // District Chart
-    const districtRecords = await fetchData(districtSql);
-    const districtCounts = processData(districtRecords, 'district');
-    const districtCtx = document.getElementById('districtChart').getContext('2d');
-    createBarChart(districtCtx, 'Incidents by District', Object.keys(districtCounts), Object.values(districtCounts));
-
-    // Radar Chart for Incident Types
     const incidentRadarCtx = document.getElementById('incidentRadarChart').getContext('2d');
-    createRadarChart(incidentRadarCtx, 'Incident Types (Radar)', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
-
-    setupQuiz();
+    createRadarChart(incidentRadarCtx, 'Incident Types by District', labels, datasets);
 }
 
 renderCharts();
