@@ -73,18 +73,18 @@ async function renderCharts() {
     const districtCtx = document.getElementById('districtChart').getContext('2d');
     createChart(districtCtx, 'Incidents by District', Object.keys(districtCounts), Object.values(districtCounts));
 
-    const geojson = L.geoJson(geojsonFeature, {
-    style: function (feature) {
-        return {
-            fillColor: getColor(feature.properties.incidents),
-            weight: 2,
-            opacity: 1,
-            color: 'white',
-            dashArray: '3',
-            fillOpacity: 0.7
-        };
-    }
-}).addTo(map);
+//     const geojson = L.geoJson(geojsonFeature, {
+//     style: function (feature) {
+//         return {
+//             fillColor: getColor(feature.properties.incidents),
+//             weight: 2,
+//             opacity: 1,
+//             color: 'white',
+//             dashArray: '3',
+//             fillOpacity: 0.7
+//         };
+//     }
+// }).addTo(map);
 }
 
 renderCharts();
