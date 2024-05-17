@@ -17,8 +17,9 @@ function processData(records, key) {
     return counts;
 }
 
-// Function to create a bar chart
+// Function to create a bar chart with colors
 function createBarChart(ctx, title, labels, data) {
+    const colors = labels.map((_, i) => `hsl(${(i * 360 / labels.length)}, 70%, 50%)`);
     new Chart(ctx, {
         type: 'bar',
         data: {
@@ -26,8 +27,8 @@ function createBarChart(ctx, title, labels, data) {
             datasets: [{
                 label: title,
                 data: data,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: colors,
+                borderColor: colors,
                 borderWidth: 1
             }]
         },
@@ -35,46 +36,28 @@ function createBarChart(ctx, title, labels, data) {
             scales: {
                 y: {
                     beginAtZero: true
+                },
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        maxRotation: 90,
+                        minRotation: 45
+                    }
                 }
-            }
-        }
-    });
-}
-
-function createChart(ctx, type, title, labels, data) {
-    return new Chart(ctx, {
-        type: type,
-        data: {
-            labels: labels,
-            datasets: [{
-                label: title,
-                data: data,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
+            },
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
                 tooltip: {
                     enabled: true,
                     mode: 'index',
-                    intersect: false,
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                },
-                x: {
-                    beginAtZero: true
+                    intersect: false
                 }
             }
         }
     });
 }
+
 // Function to create a pie chart
 function createPieChart(ctx, title, labels, data) {
     new Chart(ctx, {
@@ -155,46 +138,7 @@ function createLineChart(ctx, title, labels, data) {
         }
     });
 }
-// Function to create a chart with a logarithmic scale
-function createLogScaleChart(ctx, type, title, labels, data) {
-    return new Chart(ctx, {
-        type: type,
-        data: {
-            labels: labels,
-            datasets: [{
-                label: title,
-                data: data,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    type: 'logarithmic',
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Logarithmic Scale'
-                    }
-                },
-                x: {
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                tooltip: {
-                    enabled: true,
-                    mode: 'index',
-                    intersect: false,
-                }
-            }
-        }
-    });
-}
+
 // Function to setup the quiz
 function setupQuiz() {
     const quiz = document.getElementById('quiz');
@@ -251,31 +195,19 @@ async function renderCharts() {
     const incidentRecords = await fetchData(incidentTypeSql);
     const incidentTypeCounts = processData(incidentRecords, 'incident_description');
     const incidentTypeCtx = document.getElementById('incidentTypeChart').getContext('2d');
-    // let incidentTypeChart = createChart(incidentTypeCtx, 'bar', 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
-    let incidentTypeChart = createLogScaleChart(incidentTypeCtx, 'bar', 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+    createBarChart(incidentTypeCtx, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
 
-
-    // // Event listener for chart type toggle
-    // document.getElementById('toggleChartType').addEventListener('click', function() {
-    //     const currentType = incidentTypeChart.config.type;
-    //     const newType = currentType === 'bar' ? 'line' : 'bar';
-    //     incidentTypeChart.destroy();
-    //     incidentTypeChart = createChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
-    // });
+    // Display top incident
+    const topIncident = Object.entries(incidentTypeCounts).sort(([,a], [,b]) => b - a)[0];
+    document.getElementById('topIncident').innerText = `Top Incident: ${topIncident[0]} (${topIncident[1]} incidents)`;
 
     // Event listener for chart type toggle
     document.getElementById('toggleChartType').addEventListener('click', function() {
         const currentType = incidentTypeChart.config.type;
         const newType = currentType === 'bar' ? 'line' : 'bar';
         incidentTypeChart.destroy();
-        incidentTypeChart = createLogScaleChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+        incidentTypeChart = createBarChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
     });
-    
-    // // Incident Type Chart
-    // const incidentRecords = await fetchData(incidentTypeSql);
-    // const incidentTypeCounts = processData(incidentRecords, 'incident_description');
-    // const incidentTypeCtx = document.getElementById('incidentTypeChart').getContext('2d');
-    // createBarChart(incidentTypeCtx, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
 
     // District Chart
     const districtRecords = await fetchData(districtSql);
