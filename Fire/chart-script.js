@@ -41,6 +41,40 @@ function createBarChart(ctx, title, labels, data) {
     });
 }
 
+function createChart(ctx, type, title, labels, data) {
+    return new Chart(ctx, {
+        type: type,
+        data: {
+            labels: labels,
+            datasets: [{
+                label: title,
+                data: data,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+                x: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
 // Function to create a pie chart
 function createPieChart(ctx, title, labels, data) {
     new Chart(ctx, {
@@ -178,7 +212,21 @@ async function renderCharts() {
     const incidentRecords = await fetchData(incidentTypeSql);
     const incidentTypeCounts = processData(incidentRecords, 'incident_description');
     const incidentTypeCtx = document.getElementById('incidentTypeChart').getContext('2d');
-    createBarChart(incidentTypeCtx, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+    let incidentTypeChart = createChart(incidentTypeCtx, 'bar', 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+
+    // Event listener for chart type toggle
+    document.getElementById('toggleChartType').addEventListener('click', function() {
+        const currentType = incidentTypeChart.config.type;
+        const newType = currentType === 'bar' ? 'line' : 'bar';
+        incidentTypeChart.destroy();
+        incidentTypeChart = createChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+    });
+    
+    // // Incident Type Chart
+    // const incidentRecords = await fetchData(incidentTypeSql);
+    // const incidentTypeCounts = processData(incidentRecords, 'incident_description');
+    // const incidentTypeCtx = document.getElementById('incidentTypeChart').getContext('2d');
+    // createBarChart(incidentTypeCtx, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
 
     // District Chart
     const districtRecords = await fetchData(districtSql);
