@@ -155,7 +155,46 @@ function createLineChart(ctx, title, labels, data) {
         }
     });
 }
-
+// Function to create a chart with a logarithmic scale
+function createLogScaleChart(ctx, type, title, labels, data) {
+    return new Chart(ctx, {
+        type: type,
+        data: {
+            labels: labels,
+            datasets: [{
+                label: title,
+                data: data,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    type: 'logarithmic',
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Logarithmic Scale'
+                    }
+                },
+                x: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
+                }
+            }
+        }
+    });
+}
 // Function to setup the quiz
 function setupQuiz() {
     const quiz = document.getElementById('quiz');
@@ -212,14 +251,24 @@ async function renderCharts() {
     const incidentRecords = await fetchData(incidentTypeSql);
     const incidentTypeCounts = processData(incidentRecords, 'incident_description');
     const incidentTypeCtx = document.getElementById('incidentTypeChart').getContext('2d');
-    let incidentTypeChart = createChart(incidentTypeCtx, 'bar', 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+    // let incidentTypeChart = createChart(incidentTypeCtx, 'bar', 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+    let incidentTypeChart = createLogScaleChart(incidentTypeCtx, 'bar', 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+
+
+    // // Event listener for chart type toggle
+    // document.getElementById('toggleChartType').addEventListener('click', function() {
+    //     const currentType = incidentTypeChart.config.type;
+    //     const newType = currentType === 'bar' ? 'line' : 'bar';
+    //     incidentTypeChart.destroy();
+    //     incidentTypeChart = createChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+    // });
 
     // Event listener for chart type toggle
     document.getElementById('toggleChartType').addEventListener('click', function() {
         const currentType = incidentTypeChart.config.type;
         const newType = currentType === 'bar' ? 'line' : 'bar';
         incidentTypeChart.destroy();
-        incidentTypeChart = createChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+        incidentTypeChart = createLogScaleChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
     });
     
     // // Incident Type Chart
