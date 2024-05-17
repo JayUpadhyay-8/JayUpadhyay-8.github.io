@@ -9,59 +9,71 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-/*         .chart-container {
-            max-width: 600px;
-            margin: auto;
-        } */
-        #quiz-section {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        #quiz-section h2 {
-            text-align: center;
-        }
-        #quiz p {
-            font-size: 1.2em;
-        }
-        #quiz input[type="radio"] {
-            margin-right: 10px;
-        }
-        #quiz button {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        #quiz button:hover {
-            background-color: #218838;
-        }
-        #toggleChartType {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        #toggleChartType:hover {
-            background-color: #0056b3;
-        }
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.chart-container {
+    max-width: 900px;
+    margin: auto;
+    height: 600px;
+}
+
+#toggleChartType {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#toggleChartType:hover {
+    background-color: #0056b3;
+}
+
+#quiz-section {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#quiz-section h2 {
+    text-align: center;
+}
+
+#quiz p {
+    font-size: 1.2em;
+}
+
+#quiz input[type="radio"] {
+    margin-right: 10px;
+}
+
+#quiz button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#quiz button:hover {
+    background-color: #218838;
+}
+
     </style>
 </head>
 <body>
