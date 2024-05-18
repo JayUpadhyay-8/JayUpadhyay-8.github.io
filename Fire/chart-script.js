@@ -183,7 +183,7 @@ function submitQuiz() {
                 option.nextElementSibling.style.color = ''; // Reset color
             });
         });
-    }, 7000);
+    }, 3000);
 }
 
 // Main function to render charts
