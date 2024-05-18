@@ -162,23 +162,13 @@ input, .btnCSS, submit {
     border: none
     }
 
-.cont {
-    position: absolute;
-    width: 610px;
-    height: 10px;
-    left: 50%;
-    top: 50%;
-    margin: -100px 0 0 -300px
-    }
-
 .btnCSS {
     border-width: 1px;
     width: 600px;
-    height: 200px;
+    height: 100px;
     /*border-radius*/
     border-radius: 100px;
     background: #fff;
-    position: absolute;
     border: 5px solid #6fb07f
     }
 
@@ -266,8 +256,11 @@ body {
             text-align: center;
         }
         #quiz p {
-            font-size: 1.2em;
+            font-size: 1.3em;
         }
+label{
+font-size: 1.0em;
+}
         #quiz input[type="radio"] {
             margin-right: 10px;
         }
