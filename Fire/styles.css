@@ -10,7 +10,7 @@
 }
  */
 
-@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,800;1,600&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,800;1,600&display=swap");
 
 input{
     width: 0;
@@ -60,7 +60,7 @@ input{
     transition-delay: 0.2s;
     transition-duration: 2s;
 }
-
+ */
 
 body {
             font-family: Arial, sans-serif;
