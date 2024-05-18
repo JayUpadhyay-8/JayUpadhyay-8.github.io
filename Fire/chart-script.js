@@ -143,6 +143,7 @@ function submitQuiz() {
     
     let score = 0;
     let total = 7;
+    const incorrectAnswers = [];
 
     for (let key in correctAnswers) {
         const answer = document.querySelector(`input[name="${key}"]:checked`);
@@ -155,16 +156,28 @@ function submitQuiz() {
                 label.style.color = 'red';
                 const correctAnswer = document.querySelector(`input[name="${key}"][value="${correctAnswers[key]}"]`);
                 correctAnswer.nextElementSibling.style.color = 'green';
+                incorrectAnswers.push(key);
             }
             answer.checked = false; // Uncheck the selected answer
         } else {
             const correctAnswer = document.querySelector(`input[name="${key}"][value="${correctAnswers[key]}"]`);
             correctAnswer.nextElementSibling.style.color = 'green';
+            incorrectAnswers.push(key);
         }
     }
     
     const resultMessage = `You scored ${score} out of ${total}.`;
     document.getElementById('quiz-result').textContent = resultMessage;
+
+    // Reset incorrect answers after 7 seconds
+    setTimeout(() => {
+        incorrectAnswers.forEach(key => {
+            const options = document.querySelectorAll(`input[name="${key}"]`);
+            options.forEach(option => {
+                option.nextElementSibling.style.color = ''; // Reset color
+            });
+        });
+    }, 7000);
 }
 
 
