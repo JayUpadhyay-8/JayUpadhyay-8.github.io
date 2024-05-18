@@ -149,26 +149,26 @@ function submitQuiz() {
         const answer = document.querySelector(`input[name="${key}"]:checked`);
         if (answer) {
             userAnswers[key] = answer.value;
+            const label = answer.nextElementSibling;
             if (answer.value === correctAnswers[key]) {
                 score++;
-                answer.parentNode.style.color = 'green';
+                label.style.color = 'green';
             } else {
-                answer.parentNode.style.color = 'red';
+                label.style.color = 'red';
                 const correctAnswer = document.querySelector(`input[name="${key}"][value="${correctAnswers[key]}"]`);
                 correctAnswer.checked = true;
-                correctAnswer.parentNode.style.color = 'green';
+                correctAnswer.nextElementSibling.style.color = 'green';
             }
         } else {
             const correctAnswer = document.querySelector(`input[name="${key}"][value="${correctAnswers[key]}"]`);
             correctAnswer.checked = true;
-            correctAnswer.parentNode.style.color = 'green';
+            correctAnswer.nextElementSibling.style.color = 'green';
         }
     }
     
     const resultMessage = `You scored ${score} out of ${total}.`;
     document.getElementById('quiz-result').textContent = resultMessage;
 }
-
 
 
 // Main function to render charts
