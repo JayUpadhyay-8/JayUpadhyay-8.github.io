@@ -143,12 +143,10 @@ function submitQuiz() {
     
     let score = 0;
     let total = 7;
-    const userAnswers = {};
 
     for (let key in correctAnswers) {
         const answer = document.querySelector(`input[name="${key}"]:checked`);
         if (answer) {
-            userAnswers[key] = answer.value;
             const label = answer.nextElementSibling;
             if (answer.value === correctAnswers[key]) {
                 score++;
@@ -156,12 +154,11 @@ function submitQuiz() {
             } else {
                 label.style.color = 'red';
                 const correctAnswer = document.querySelector(`input[name="${key}"][value="${correctAnswers[key]}"]`);
-                correctAnswer.checked = true;
                 correctAnswer.nextElementSibling.style.color = 'green';
             }
+            answer.checked = false; // Uncheck the selected answer
         } else {
             const correctAnswer = document.querySelector(`input[name="${key}"][value="${correctAnswers[key]}"]`);
-            correctAnswer.checked = true;
             correctAnswer.nextElementSibling.style.color = 'green';
         }
     }
