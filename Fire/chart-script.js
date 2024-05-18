@@ -144,24 +144,35 @@ function submitQuiz() {
     let score = 0;
     let total = 7;
     const userAnswers = {};
-    
+
     for (let key in correctAnswers) {
         const answer = document.querySelector(`input[name="${key}"]:checked`);
+        const correctAnswerText = document.createElement('span');
+        correctAnswerText.style.fontWeight = 'bold';
+        correctAnswerText.style.marginLeft = '10px';
         if (answer) {
             userAnswers[key] = answer.value;
             if (answer.value === correctAnswers[key]) {
                 score++;
+                correctAnswerText.style.color = 'green';
+                correctAnswerText.textContent = 'Correct';
+            } else {
+                correctAnswerText.style.color = 'red';
+                correctAnswerText.textContent = `Incorrect, correct answer is ${correctAnswers[key]}`;
             }
+            answer.parentNode.appendChild(correctAnswerText);
+        } else {
+            correctAnswerText.style.color = 'red';
+            correctAnswerText.textContent = `Correct answer is ${correctAnswers[key]}`;
+            const questionElement = document.querySelector(`input[name="${key}"]`).closest('p');
+            questionElement.appendChild(correctAnswerText);
         }
     }
     
-    let resultMessage = `You scored ${score} out of ${total}.\n\nCorrect Answers:\n`;
-    for (let key in correctAnswers) {
-        resultMessage += `- ${key.charAt(0).toUpperCase() + key.slice(1)}: ${correctAnswers[key]}\n`;
-    }
-    
-    alert(resultMessage);
+    const resultMessage = `You scored ${score} out of ${total}.`;
+    document.getElementById('quiz-result').textContent = resultMessage;
 }
+
 // Main function to render charts
 async function renderCharts() {
     const incidentTypeSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "incident_description" IS NOT NULL`;
