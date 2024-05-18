@@ -20,7 +20,7 @@ function processData(records, key) {
 // Function to create a bar chart with colors
 function createBarChart(ctx, title, labels, data) {
     const colors = labels.map((_, i) => `hsl(${(i * 360 / labels.length)}, 70%, 50%)`);
-    new Chart(ctx, {
+    return new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
@@ -33,6 +33,8 @@ function createBarChart(ctx, title, labels, data) {
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true
@@ -45,8 +47,6 @@ function createBarChart(ctx, title, labels, data) {
                     }
                 }
             },
-            responsive: true,
-            maintainAspectRatio: false,
             plugins: {
                 tooltip: {
                     enabled: true,
@@ -58,130 +58,50 @@ function createBarChart(ctx, title, labels, data) {
     });
 }
 
-// Function to create a pie chart
-function createPieChart(ctx, title, labels, data) {
-    new Chart(ctx, {
-        type: 'pie',
+// Function to create a chart with a logarithmic scale
+function createLogScaleChart(ctx, type, title, labels, data) {
+    const colors = labels.map((_, i) => `hsl(${(i * 360 / labels.length)}, 70%, 50%)`);
+    return new Chart(ctx, {
+        type: type,
         data: {
             labels: labels,
             datasets: [{
                 label: title,
                 data: data,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
+                backgroundColor: colors,
+                borderColor: colors,
                 borderWidth: 1
-            }]
-        }
-    });
-}
-
-// Function to create a line chart
-function createLineChart(ctx, title, labels, data) {
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: title,
-                data: data,
-                fill: false,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                tension: 0.1
             }]
         },
         options: {
             responsive: true,
-            plugins: {
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    type: 'logarithmic',
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Logarithmic Scale'
+                    }
                 },
-                title: {
-                    display: true,
-                    text: title
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        maxRotation: 90,
+                        minRotation: 45
+                    }
                 }
             },
-            hover: {
-                mode: 'nearest',
-                intersect: true
-            },
-            scales: {
-                x: {
-                    display: true,
-                    title: {
-                        display: true,
-                        text: 'Date'
-                    }
-                },
-                y: {
-                    display: true,
-                    title: {
-                        display: true,
-                        text: 'Number of Incidents'
-                    }
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false
                 }
             }
         }
     });
-}
-
-// Function to setup the quiz
-function setupQuiz() {
-    const quiz = document.getElementById('quiz');
-    quiz.innerHTML = `
-        <p>What should you do if your clothes catch fire? 🔥</p>
-        <input type="radio" id="stop" name="fire" value="stop"><label for="stop">Stop, Drop, and Roll</label><br>
-        <input type="radio" id="run" name="fire" value="run"><label for="run">Run</label><br>
-        <p>Where should you aim a fire extinguisher? 🧯</p>
-        <input type="radio" id="base" name="extinguisher" value="base"><label for="base">At the base of the fire</label><br>
-        <input type="radio" id="top" name="extinguisher" value="top"><label for="top">At the top of the flames</label><br>
-        <p>What is the emergency number for fire services? ☎️</p>
-        <input type="radio" id="911" name="number" value="911"><label for="911">911</label><br>
-        <input type="radio" id="112" name="number" value="112"><label for="112">112</label><br>
-        <p>What should you do if you see smoke while escaping a fire? 🚪</p>
-        <input type="radio" id="crawl" name="smoke" value="crawl"><label for="crawl">Crawl on the floor</label><br>
-        <input type="radio" id="stand" name="smoke" value="stand"><label for="stand">Stand up and run</label><br>
-        <p>How often should you check your smoke alarms? 🕒</p>
-        <input type="radio" id="monthly" name="alarms" value="monthly"><label for="monthly">Monthly</label><br>
-        <input type="radio" id="yearly" name="alarms" value="yearly"><label for="yearly">Yearly</label><br>
-    `;
-}
-
-// Function to submit the quiz
-function submitQuiz() {
-    const correctAnswers = {
-        fire: 'stop',
-        extinguisher: 'base',
-        number: '911',
-        smoke: 'crawl',
-        alarms: 'monthly'
-    };
-    
-    let score = 0;
-    let total = 5;
-    
-    for (let key in correctAnswers) {
-        const answer = document.querySelector(`input[name="${key}"]:checked`);
-        if (answer && answer.value === correctAnswers[key]) {
-            score++;
-        }
-    }
-    
-    alert(`You scored ${score} out of ${total}.`);
 }
 
 // Main function to render charts
@@ -195,7 +115,7 @@ async function renderCharts() {
     const incidentRecords = await fetchData(incidentTypeSql);
     const incidentTypeCounts = processData(incidentRecords, 'incident_description');
     const incidentTypeCtx = document.getElementById('incidentTypeChart').getContext('2d');
-    createBarChart(incidentTypeCtx, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+    let incidentTypeChart = createLogScaleChart(incidentTypeCtx, 'bar', 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
 
     // Display top incident
     const topIncident = Object.entries(incidentTypeCounts).sort(([,a], [,b]) => b - a)[0];
@@ -206,7 +126,7 @@ async function renderCharts() {
         const currentType = incidentTypeChart.config.type;
         const newType = currentType === 'bar' ? 'line' : 'bar';
         incidentTypeChart.destroy();
-        incidentTypeChart = createBarChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+        incidentTypeChart = createLogScaleChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
     });
 
     // District Chart
