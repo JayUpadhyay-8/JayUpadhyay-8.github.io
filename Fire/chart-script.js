@@ -6,16 +6,7 @@ async function fetchData(sqlQuery) {
     return data.result.records;
 }
 
-// Function to process data for a chart
-// function processData(records, key) {
-//     const counts = {};
-//     records.forEach(record => {
-//         if (record[key]) {
-//             counts[record[key]] = (counts[record[key]] || 0) + 1;
-//         }
-//     });
-//     return counts;
-// }
+
 // Function to process data for a chart
 function processData(records, key, map = null) {
     const counts = {};
@@ -31,85 +22,7 @@ function processData(records, key, map = null) {
     return counts;
 }
 
-// Mapping of district numbers to names
-const districtMap = {
-    '01': 'Downtown',
-    '02': 'Charlestown',
-    '03': 'Back Bay',
-    '04': 'South End',
-    '05': 'South Boston',
-    '06': 'North End',
-    '07': 'Roxbury',
-    '08': 'North Dorchester',
-    '09': 'South Dorchester',
-    '10': 'East Boston',
-    '11': 'Hyde Park',
-    '12': 'Jamaica Plain',
-    '13': 'Mattapan',
-    '14': 'Roslindale',
-    '15': 'West Roxbury',
-    '16': 'Allston/Brighton',
-    '17': 'Fenway/Kenmore',
-    '18': 'Mission Hill'
-};
-// Function to create a bar chart
-// function createBarChart(ctx, title, labels, data) {
-//     new Chart(ctx, {
-//         type: 'bar',
-//         data: {
-//             labels: labels,
-//             datasets: [{
-//                 label: title,
-//                 data: data,
-//                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
-//                 borderColor: 'rgba(255, 99, 132, 1)',
-//                 borderWidth: 1
-//             }]
-//         },
-//         options: {
-//             scales: {
-//                 y: {
-//                     beginAtZero: true
-//                 }
-//             }
-//         }
-//     });
-// }
 
-function createChart(ctx, type, title, labels, data) {
-    return new Chart(ctx, {
-        type: type,
-        data: {
-            labels: labels,
-            datasets: [{
-                label: title,
-                data: data,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                tooltip: {
-                    enabled: true,
-                    mode: 'index',
-                    intersect: false,
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                },
-                x: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
 // Function to create a pie chart
 function createPieChart(ctx, title, labels, data) {
     new Chart(ctx, {
@@ -141,135 +54,6 @@ function createPieChart(ctx, title, labels, data) {
     });
 }
 
-// Function to create a line chart
-function createLineChart(ctx, title, labels, data) {
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: title,
-                data: data,
-                fill: false,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                },
-                title: {
-                    display: true,
-                    text: title
-                }
-            },
-            hover: {
-                mode: 'nearest',
-                intersect: true
-            },
-            scales: {
-                x: {
-                    display: true,
-                    title: {
-                        display: true,
-                        text: 'Date'
-                    }
-                },
-                y: {
-                    display: true,
-                    title: {
-                        display: true,
-                        text: 'Number of Incidents'
-                    }
-                }
-            }
-        }
-    });
-}
-// Function to create a chart with a logarithmic scale
-// function createLogScaleChart(ctx, type, title, labels, data) {
-//     return new Chart(ctx, {
-//         type: type,
-//         data: {
-//             labels: labels,
-//             datasets: [{
-//                 label: title,
-//                 data: data,
-//                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
-//                 borderColor: 'rgba(255, 99, 132, 1)',
-//                 borderWidth: 1
-//             }]
-//         },
-//         options: {
-//             responsive: true,
-//             maintainAspectRatio: false,
-//             scales: {
-//                 y: {
-//                     type: 'logarithmic',
-//                     beginAtZero: true,
-//                     title: {
-//                         display: true,
-//                         text: 'Logarithmic Scale'
-//                     }
-//                 },
-//                 x: {
-//                     beginAtZero: true
-//                 }
-//             },
-//             plugins: {
-//                 tooltip: {
-//                     enabled: true,
-//                     mode: 'index',
-//                     intersect: false,
-//                 }
-//             }
-//         }
-//     });
-// }
-
-// Function to create a bar chart with colors
-function createBarChart(ctx, title, labels, data) {
-    return new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: title,
-                data: data,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                },
-                x: {
-                    beginAtZero: true,
-                    ticks: {
-                        maxRotation: 90,
-                        minRotation: 45
-                    }
-                }
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                tooltip: {
-                    enabled: true,
-                    mode: 'index',
-                    intersect: false
-                }
-            }
-        }
-    });
-}
 
 // Function to create a chart with a logarithmic scale
 function createLogScaleChart(ctx, type, title, labels, data) {
@@ -373,17 +157,9 @@ async function renderCharts() {
     const incidentRecords = await fetchData(incidentTypeSql);
     const incidentTypeCounts = processData(incidentRecords, 'incident_description');
     const incidentTypeCtx = document.getElementById('incidentTypeChart').getContext('2d');
-    // let incidentTypeChart = createChart(incidentTypeCtx, 'bar', 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
     let incidentTypeChart = createLogScaleChart(incidentTypeCtx, 'bar', 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
 
 
-    // // Event listener for chart type toggle
-    // document.getElementById('toggleChartType').addEventListener('click', function() {
-    //     const currentType = incidentTypeChart.config.type;
-    //     const newType = currentType === 'bar' ? 'line' : 'bar';
-    //     incidentTypeChart.destroy();
-    //     incidentTypeChart = createChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
-    // });
 
     // Event listener for chart type toggle
     document.getElementById('toggleChartType').addEventListener('click', function() {
@@ -397,14 +173,6 @@ async function renderCharts() {
     const topIncident = Object.entries(incidentTypeCounts).sort(([,a], [,b]) => b - a)[0];
     document.getElementById('topIncident').innerText = `Top Incident: ${topIncident[0]} (${topIncident[1]} incidents)`;
 
-    // Event listener for chart type toggle
-    // document.getElementById('toggleChartType').addEventListener('click', function() {
-    //     const currentType = incidentTypeChart.config.type;
-    //     const newType = currentType === 'bar' ? 'line' : 'bar';
-    //     incidentTypeChart.destroy();
-    //     incidentTypeChart = createLogScaleChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
-    // });
-
     // Event listener for top 10 incidents toggle
     document.getElementById('toggleTop10').addEventListener('click', function() {
         const top10 = Object.entries(incidentTypeCounts).sort(([,a], [,b]) => b - a).slice(0, 10);
@@ -414,17 +182,7 @@ async function renderCharts() {
         incidentTypeChart = createLogScaleChart(incidentTypeCtx, 'bar', 'Top 10 Incident Types', top10Labels, top10Data);
     });
     
-    // // Incident Type Chart
-    // const incidentRecords = await fetchData(incidentTypeSql);
-    // const incidentTypeCounts = processData(incidentRecords, 'incident_description');
-    // const incidentTypeCtx = document.getElementById('incidentTypeChart').getContext('2d');
-    // createBarChart(incidentTypeCtx, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
-
-    // District Chart
-    const districtRecords = await fetchData(districtSql);
-    const districtCounts = processData(districtRecords, 'district',districtMap);
-    const districtCtx = document.getElementById('districtChart').getContext('2d');
-    createBarChart(districtCtx, 'Incidents by District', Object.keys(districtCounts), Object.values(districtCounts));
+    
 
     // Neighborhood Pie Chart
     const neighborhoodRecords = await fetchData(neighborhoodSql);
@@ -432,11 +190,7 @@ async function renderCharts() {
     const neighborhoodCtx = document.getElementById('neighborhoodPieChart').getContext('2d');
     createPieChart(neighborhoodCtx, 'Incidents by Neighborhood', Object.keys(neighborhoodCounts), Object.values(neighborhoodCounts));
 
-    // Fire Incident Line Chart
-    const fireIncidentRecords = await fetchData(fireIncidentSql);
-    const fireIncidentCounts = processData(fireIncidentRecords, 'alarm_date');
-    const fireIncidentCtx = document.getElementById('fireIncidentLineChart').getContext('2d');
-    createLineChart(fireIncidentCtx, 'Fire Incidents Over Time', Object.keys(fireIncidentCounts), Object.values(fireIncidentCounts));
+   
 
     setupQuiz();
 }
