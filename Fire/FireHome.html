@@ -8,18 +8,18 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<!--     <style>
-       body {
+    <style>
+/*       body {
             font-family: Arial, sans-serif;
         }
         h1 {
             text-align: center;
             color: #333;
         }
-        .chart-container {
+        .chart-container { */
 /*             max-width: 1200px;
             margin: auto; */
-            height: 800px;
+/*             height: 800px;
         }
         #toggleChartType, #toggleTop10 {
             display: block;
@@ -70,8 +70,29 @@
             margin-top: 20px;
             color: #d9534f;
         }
+ */
+        #quiz button {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 40px;
+            background: linear-gradient(90deg, rgba(0,123,255,1) 0%, rgba(0,89,183,1) 100%);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
+        }
+        
+        #quiz button:hover {
+            background: linear-gradient(90deg, rgba(0,89,183,1) 0%, rgba(0,123,255,1) 100%);
+            box-shadow: 0 12px 16px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
 
-    </style> -->
+    </style> 
 </head>
 <body>
     <h1>Fire Incident Data Visualizations</h1>
