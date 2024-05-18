@@ -258,9 +258,7 @@ body {
         #quiz p {
             font-size: 1.3em;
         }
-label{
-font-size: 1.0em;
-}
+
         #quiz input[type="radio"] {
             margin-right: 10px;
         }
