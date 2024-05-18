@@ -120,6 +120,12 @@ function setupQuiz() {
         <p>How often should you check your smoke alarms? 🕒</p>
         <input type="radio" id="monthly" name="alarms" value="monthly"><label for="monthly">Monthly</label><br>
         <input type="radio" id="yearly" name="alarms" value="yearly"><label for="yearly">Yearly</label><br>
+        <p>What is the first thing you should do when you hear a fire alarm in a building? 🔊</p>
+        <input type="radio" id="evacuate" name="alarm" value="evacuate"><label for="evacuate">Evacuate immediately</label><br>
+        <input type="radio" id="investigate" name="alarm" value="investigate"><label for="investigate">Investigate the source of the alarm</label><br>
+        <p>What should you do if you are trapped in a burning building? 🏢</p>
+        <input type="radio" id="signal" name="trapped" value="signal"><label for="signal">Signal for help at a window</label><br>
+        <input type="radio" id="hide" name="trapped" value="hide"><label for="hide">Hide in a corner</label><br>
     `;
 }
 
@@ -130,22 +136,32 @@ function submitQuiz() {
         extinguisher: 'base',
         number: '911',
         smoke: 'crawl',
-        alarms: 'monthly'
+        alarms: 'monthly',
+        alarm: 'evacuate',
+        trapped: 'signal'
     };
     
     let score = 0;
-    let total = 5;
+    let total = 7;
+    const userAnswers = {};
     
     for (let key in correctAnswers) {
         const answer = document.querySelector(`input[name="${key}"]:checked`);
-        if (answer && answer.value === correctAnswers[key]) {
-            score++;
+        if (answer) {
+            userAnswers[key] = answer.value;
+            if (answer.value === correctAnswers[key]) {
+                score++;
+            }
         }
     }
     
-    alert(`You scored ${score} out of ${total}.`);
+    let resultMessage = `You scored ${score} out of ${total}.\n\nCorrect Answers:\n`;
+    for (let key in correctAnswers) {
+        resultMessage += `- ${key.charAt(0).toUpperCase() + key.slice(1)}: ${correctAnswers[key]}\n`;
+    }
+    
+    alert(resultMessage);
 }
-
 // Main function to render charts
 async function renderCharts() {
     const incidentTypeSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "incident_description" IS NOT NULL`;
