@@ -238,8 +238,8 @@ function createBarChart(ctx, title, labels, data) {
 }
 
 // Function to create a chart with a logarithmic scale
-function createLogScaleChart(ctx, type, title, labels, data) {
-    const colors = labels.map((_, i) => `hsl(${(i * 360 / labels.length)}, 70%, 50%)`);
+function createLogScaleChart(ctx, type, title, labels, data,colors) {
+    
     return new Chart(ctx, {
         type: type,
         data: {
@@ -340,7 +340,7 @@ async function renderCharts() {
     const incidentTypeCounts = processData(incidentRecords, 'incident_description');
     const incidentTypeCtx = document.getElementById('incidentTypeChart').getContext('2d');
     // let incidentTypeChart = createChart(incidentTypeCtx, 'bar', 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
-    let incidentTypeChart = createLogScaleChart(incidentTypeCtx, 'bar', 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+    let incidentTypeChart = createLogScaleChart(incidentTypeCtx, 'bar', 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts),'rgba(255, 99, 132, 0.2)');
 
 
     // // Event listener for chart type toggle
@@ -356,7 +356,7 @@ async function renderCharts() {
         const currentType = incidentTypeChart.config.type;
         const newType = currentType === 'bar' ? 'line' : 'bar';
         incidentTypeChart.destroy();
-        incidentTypeChart = createLogScaleChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+        incidentTypeChart = createLogScaleChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts),'rgba(255, 99, 132, 0.2)');
     });
 
     // Display top incident
@@ -376,6 +376,7 @@ async function renderCharts() {
         const top10 = Object.entries(incidentTypeCounts).sort(([,a], [,b]) => b - a).slice(0, 10);
         const top10Labels = top10.map(entry => entry[0]);
         const top10Data = top10.map(entry => entry[1]);
+        const colors = labels.map((_, i) => `hsl(${(i * 360 / labels.length)}, 70%, 50%)`);
         incidentTypeChart.destroy();
         incidentTypeChart = createLogScaleChart(incidentTypeCtx, 'bar', 'Top 10 Incident Types', top10Labels, top10Data);
     });
