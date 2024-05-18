@@ -156,8 +156,6 @@ function submitQuiz() {
                 label.style.color = 'green';
             } else {
                 label.style.color = 'red';
-                const correctAnswer = document.querySelector(`input[name="${key}"][value="${correctAnswers[key]}"]`);
-                correctAnswer.nextElementSibling.style.color = 'green';
                 incorrectAnswers.push(key);
             }
             answer.checked = false; // Uncheck the selected answer
@@ -169,13 +167,10 @@ function submitQuiz() {
         return;
     }
 
-    for (let key in correctAnswers) {
-        if (!document.querySelector(`input[name="${key}"]:checked`)) {
-            const correctAnswer = document.querySelector(`input[name="${key}"][value="${correctAnswers[key]}"]`);
-            correctAnswer.nextElementSibling.style.color = 'green';
-            incorrectAnswers.push(key);
-        }
-    }
+    incorrectAnswers.forEach(key => {
+        const correctAnswer = document.querySelector(`input[name="${key}"][value="${correctAnswers[key]}"]`);
+        correctAnswer.nextElementSibling.style.color = 'green';
+    });
     
     const resultMessage = `You scored ${score} out of ${total}.`;
     document.getElementById('quiz-result').textContent = resultMessage;
@@ -190,7 +185,6 @@ function submitQuiz() {
         });
     }, 7000);
 }
-
 
 // Main function to render charts
 async function renderCharts() {
