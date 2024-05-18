@@ -9,7 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+<!--     <style>
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
@@ -103,7 +103,7 @@
         margin-right: auto;
         margin-left: auto;
         }  
-    </style>
+    </style> -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-100">
@@ -121,21 +121,25 @@
 
     <section class="section">
         <h1>Fire Incident Data Visualizations</h1>
-    <div>
-        <canvas id="incidentTypeChart"></canvas>
-    </div>
-    <div>
-        <canvas id="districtChart"></canvas>
-    </div>
-    <div>
-        <canvas id="incidentRadarChart"></canvas>
-    </div>
-    <div id="quiz-section">
-    <h2>Test Your Fire Safety Knowledge!</h2>
-    <div id="quiz"></div>
-    <button onclick="submitQuiz()">Submit</button>
-</div>
-    <script src="chart-script.js"></script>
+        <div class="chart-container">
+            <canvas id="incidentTypeChart"></canvas>
+        </div>
+        <button id="toggleChartType">Toggle Chart Type</button>
+        <button id="toggleTop10">Show Top 10 Incidents</button>
+        <div id="topIncident"></div>
+    
+        <div>
+            <canvas id="neighborhoodPieChart" style="width: 700px; height: 700px; display: flex; justify-content: center; margin: 20px auto;"></canvas>
+        </div>
+    
+        <div id="quiz-section">
+            <h2>Test Your Fire Safety Knowledge! 🔥</h2>
+            <div id="quiz"></div>
+            <button class = "btnCSS" onclick="submitQuiz()">Submit</button>
+    
+            <div id="quiz-result"></div>
+    
+        </div>
     </section>
 
     <section class="section bg-white">
