@@ -7,16 +7,51 @@ async function fetchData(sqlQuery) {
 }
 
 // Function to process data for a chart
-function processData(records, key) {
+// function processData(records, key) {
+//     const counts = {};
+//     records.forEach(record => {
+//         if (record[key]) {
+//             counts[record[key]] = (counts[record[key]] || 0) + 1;
+//         }
+//     });
+//     return counts;
+// }
+// Function to process data for a chart
+function processData(records, key, map = null) {
     const counts = {};
     records.forEach(record => {
-        if (record[key]) {
-            counts[record[key]] = (counts[record[key]] || 0) + 1;
+        let value = record[key];
+        if (map && map[value]) {
+            value = map[value];
+        }
+        if (value) {
+            counts[value] = (counts[value] || 0) + 1;
         }
     });
     return counts;
 }
 
+// Mapping of district numbers to names
+const districtMap = {
+    '01': 'Downtown',
+    '02': 'Charlestown',
+    '03': 'Back Bay',
+    '04': 'South End',
+    '05': 'South Boston',
+    '06': 'North End',
+    '07': 'Roxbury',
+    '08': 'North Dorchester',
+    '09': 'South Dorchester',
+    '10': 'East Boston',
+    '11': 'Hyde Park',
+    '12': 'Jamaica Plain',
+    '13': 'Mattapan',
+    '14': 'Roslindale',
+    '15': 'West Roxbury',
+    '16': 'Allston/Brighton',
+    '17': 'Fenway/Kenmore',
+    '18': 'Mission Hill'
+};
 // Function to create a bar chart
 // function createBarChart(ctx, title, labels, data) {
 //     new Chart(ctx, {
