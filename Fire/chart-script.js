@@ -422,7 +422,7 @@ async function renderCharts() {
 
     // District Chart
     const districtRecords = await fetchData(districtSql);
-    const districtCounts = processData(districtRecords, 'district');
+    const districtCounts = processData(districtRecords, 'district',districtMap);
     const districtCtx = document.getElementById('districtChart').getContext('2d');
     createBarChart(districtCtx, 'Incidents by District', Object.keys(districtCounts), Object.values(districtCounts));
 
