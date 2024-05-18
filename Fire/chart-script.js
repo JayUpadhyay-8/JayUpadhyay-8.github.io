@@ -143,11 +143,13 @@ function submitQuiz() {
     
     let score = 0;
     let total = 7;
+    let answered = false;
     const incorrectAnswers = [];
 
     for (let key in correctAnswers) {
         const answer = document.querySelector(`input[name="${key}"]:checked`);
         if (answer) {
+            answered = true;
             const label = answer.nextElementSibling;
             if (answer.value === correctAnswers[key]) {
                 score++;
@@ -166,6 +168,11 @@ function submitQuiz() {
         }
     }
     
+    if (!answered) {
+        alert("No answer is selected. It's important to test your knowledge on fire safety!");
+        return;
+    }
+
     const resultMessage = `You scored ${score} out of ${total}.`;
     document.getElementById('quiz-result').textContent = resultMessage;
 
