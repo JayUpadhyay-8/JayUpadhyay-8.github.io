@@ -164,7 +164,7 @@ function submitQuiz() {
         } else {
             correctAnswerText.style.color = 'red';
             correctAnswerText.textContent = `Correct answer is ${correctAnswers[key]}`;
-            const questionElement = document.querySelector(`input[name="${key}"]`).closest('p');
+            const questionElement = document.querySelector(`input[name="${key}"]`).closest('p') || document.querySelector(`input[name="${key}"]`).parentNode;
             questionElement.appendChild(correctAnswerText);
         }
     }
