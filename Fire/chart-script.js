@@ -18,28 +18,28 @@ function processData(records, key) {
 }
 
 // Function to create a bar chart
-function createBarChart(ctx, title, labels, data) {
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: title,
-                data: data,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
+// function createBarChart(ctx, title, labels, data) {
+//     new Chart(ctx, {
+//         type: 'bar',
+//         data: {
+//             labels: labels,
+//             datasets: [{
+//                 label: title,
+//                 data: data,
+//                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
+//                 borderColor: 'rgba(255, 99, 132, 1)',
+//                 borderWidth: 1
+//             }]
+//         },
+//         options: {
+//             scales: {
+//                 y: {
+//                     beginAtZero: true
+//                 }
+//             }
+//         }
+//     });
+// }
 
 function createChart(ctx, type, title, labels, data) {
     return new Chart(ctx, {
@@ -156,7 +156,90 @@ function createLineChart(ctx, title, labels, data) {
     });
 }
 // Function to create a chart with a logarithmic scale
+// function createLogScaleChart(ctx, type, title, labels, data) {
+//     return new Chart(ctx, {
+//         type: type,
+//         data: {
+//             labels: labels,
+//             datasets: [{
+//                 label: title,
+//                 data: data,
+//                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
+//                 borderColor: 'rgba(255, 99, 132, 1)',
+//                 borderWidth: 1
+//             }]
+//         },
+//         options: {
+//             responsive: true,
+//             maintainAspectRatio: false,
+//             scales: {
+//                 y: {
+//                     type: 'logarithmic',
+//                     beginAtZero: true,
+//                     title: {
+//                         display: true,
+//                         text: 'Logarithmic Scale'
+//                     }
+//                 },
+//                 x: {
+//                     beginAtZero: true
+//                 }
+//             },
+//             plugins: {
+//                 tooltip: {
+//                     enabled: true,
+//                     mode: 'index',
+//                     intersect: false,
+//                 }
+//             }
+//         }
+//     });
+// }
+
+// Function to create a bar chart with colors
+function createBarChart(ctx, title, labels, data) {
+    const colors = labels.map((_, i) => `hsl(${(i * 360 / labels.length)}, 70%, 50%)`);
+    return new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: title,
+                data: data,
+                backgroundColor: colors,
+                borderColor: colors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        maxRotation: 90,
+                        minRotation: 45
+                    }
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false
+                }
+            }
+        }
+    });
+}
+
+// Function to create a chart with a logarithmic scale
 function createLogScaleChart(ctx, type, title, labels, data) {
+    const colors = labels.map((_, i) => `hsl(${(i * 360 / labels.length)}, 70%, 50%)`);
     return new Chart(ctx, {
         type: type,
         data: {
@@ -164,8 +247,8 @@ function createLogScaleChart(ctx, type, title, labels, data) {
             datasets: [{
                 label: title,
                 data: data,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: colors,
+                borderColor: colors,
                 borderWidth: 1
             }]
         },
@@ -182,19 +265,24 @@ function createLogScaleChart(ctx, type, title, labels, data) {
                     }
                 },
                 x: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        maxRotation: 90,
+                        minRotation: 45
+                    }
                 }
             },
             plugins: {
                 tooltip: {
                     enabled: true,
                     mode: 'index',
-                    intersect: false,
+                    intersect: false
                 }
             }
         }
     });
 }
+
 // Function to setup the quiz
 function setupQuiz() {
     const quiz = document.getElementById('quiz');
@@ -269,6 +357,27 @@ async function renderCharts() {
         const newType = currentType === 'bar' ? 'line' : 'bar';
         incidentTypeChart.destroy();
         incidentTypeChart = createLogScaleChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+    });
+
+    // Display top incident
+    const topIncident = Object.entries(incidentTypeCounts).sort(([,a], [,b]) => b - a)[0];
+    document.getElementById('topIncident').innerText = `Top Incident: ${topIncident[0]} (${topIncident[1]} incidents)`;
+
+    // Event listener for chart type toggle
+    // document.getElementById('toggleChartType').addEventListener('click', function() {
+    //     const currentType = incidentTypeChart.config.type;
+    //     const newType = currentType === 'bar' ? 'line' : 'bar';
+    //     incidentTypeChart.destroy();
+    //     incidentTypeChart = createLogScaleChart(incidentTypeCtx, newType, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
+    // });
+
+    // Event listener for top 10 incidents toggle
+    document.getElementById('toggleTop10').addEventListener('click', function() {
+        const top10 = Object.entries(incidentTypeCounts).sort(([,a], [,b]) => b - a).slice(0, 10);
+        const top10Labels = top10.map(entry => entry[0]);
+        const top10Data = top10.map(entry => entry[1]);
+        incidentTypeChart.destroy();
+        incidentTypeChart = createLogScaleChart(incidentTypeCtx, 'bar', 'Top 10 Incident Types', top10Labels, top10Data);
     });
     
     // // Incident Type Chart
