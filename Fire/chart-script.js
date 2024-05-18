@@ -147,25 +147,21 @@ function submitQuiz() {
 
     for (let key in correctAnswers) {
         const answer = document.querySelector(`input[name="${key}"]:checked`);
-        const correctAnswerText = document.createElement('span');
-        correctAnswerText.style.fontWeight = 'bold';
-        correctAnswerText.style.marginLeft = '10px';
         if (answer) {
             userAnswers[key] = answer.value;
             if (answer.value === correctAnswers[key]) {
                 score++;
-                correctAnswerText.style.color = 'green';
-                correctAnswerText.textContent = 'Correct';
+                answer.parentNode.style.color = 'green';
             } else {
-                correctAnswerText.style.color = 'red';
-                correctAnswerText.textContent = `Incorrect, correct answer is ${correctAnswers[key]}`;
+                answer.parentNode.style.color = 'red';
+                const correctAnswer = document.querySelector(`input[name="${key}"][value="${correctAnswers[key]}"]`);
+                correctAnswer.checked = true;
+                correctAnswer.parentNode.style.color = 'green';
             }
-            answer.parentNode.appendChild(correctAnswerText);
         } else {
-            correctAnswerText.style.color = 'red';
-            correctAnswerText.textContent = `Correct answer is ${correctAnswers[key]}`;
-            const questionElement = document.querySelector(`input[name="${key}"]`).closest('p') || document.querySelector(`input[name="${key}"]`).parentNode;
-            questionElement.appendChild(correctAnswerText);
+            const correctAnswer = document.querySelector(`input[name="${key}"][value="${correctAnswers[key]}"]`);
+            correctAnswer.checked = true;
+            correctAnswer.parentNode.style.color = 'green';
         }
     }
     
