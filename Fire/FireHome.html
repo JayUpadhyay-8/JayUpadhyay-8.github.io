@@ -8,91 +8,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <style>
-/*       body {
-            font-family: Arial, sans-serif;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .chart-container { */
-/*             max-width: 1200px;
-            margin: auto; */
-/*             height: 800px;
-        }
-        #toggleChartType, #toggleTop10 {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        #toggleChartType:hover, #toggleTop10:hover {
-            background-color: #0056b3;
-        }
-        #quiz-section {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        #quiz-section h2 {
-            text-align: center;
-        }
-        #quiz p {
-            font-size: 1.2em;
-        }
-        #quiz input[type="radio"] {
-            margin-right: 10px;
-        }
-        #quiz button {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        #quiz button:hover {
-            background-color: #218838;
-        }
-        #topIncident {
-            text-align: center;
-            font-size: 1.5em;
-            margin-top: 20px;
-            color: #d9534f;
-        }
- */
-        #quiz .btnCSS {
-            display: block;
-            margin: 20px auto;
-            padding: 15px 40px;
-            background: linear-gradient(90deg, rgba(0,123,255,1) 0%, rgba(0,89,183,1) 100%);
-            color: #fff;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.5em;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-            transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
-        }
-        
-        #quiz .btnCSS:hover {
-            background: linear-gradient(90deg, rgba(0,89,183,1) 0%, rgba(0,123,255,1) 100%);
-            box-shadow: 0 12px 16px rgba(0, 0, 0, 0.3);
-            transform: translateY(-2px);
-        }
-
-    </style> 
+    
 </head>
 <body>
     <h1>Fire Incident Data Visualizations</h1>
@@ -102,32 +18,18 @@
     <button id="toggleChartType">Toggle Chart Type</button>
     <button id="toggleTop10">Show Top 10 Incidents</button>
     <div id="topIncident"></div>
-<!--     <div class="chart-container">
-        <canvas id="districtChart"></canvas>
-    </div> -->
+
     <div>
         <canvas id="neighborhoodPieChart" style="width: 700px; height: 700px; display: flex; justify-content: center; margin: 20px auto;"></canvas>
     </div>
-<!--     <div class="chart-container">
-        <canvas id="fireIncidentLineChart" style="max-width: 600px; max-height: 400px;"></canvas>
-    </div> -->
+
     <div id="quiz-section">
         <h2>Test Your Fire Safety Knowledge! 🔥</h2>
         <div id="quiz"></div>
         <button class = "btnCSS" onclick="submitQuiz()">Submit</button>
-<!--         <div class="cont">	
-        <button class="btn btnCSS" onclick="submitQuiz()"><span>Submit</span><img src="https://i.cloudup.com/2ZAX3hVsBE-3000x3000.png" height="62" width="62"></button>
-        </div> -->
+
         <div id="quiz-result"></div>
-<!--         <div class="container">
-          <button id="button" onclick="submitQuiz()"></button>
-        </div> -->
-<!--            <label class="submit">
-            <input type="checkbox">
-            <div class="sub">Submit</div>
-            <div class="ok"></div>
-           </label> -->
-        
+
     </div>
     <script src="chart-script.js"></script>
 </body>
