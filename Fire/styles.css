@@ -158,7 +158,7 @@ input{
     background: #fff
     } */
 
-input, button, submit {
+input, .btnCSS, submit {
     border: none
     }
 
@@ -171,7 +171,7 @@ input, button, submit {
     margin: -100px 0 0 -300px
     }
 
-button {
+.btnCSS {
     border-width: 1px;
     width: 600px;
     height: 200px;
@@ -182,7 +182,7 @@ button {
     border: 5px solid #6fb07f
     }
 
-button > span {
+.btnCSS > span {
     font-size: 48px;
     color: #6fb07f
     }
@@ -199,7 +199,7 @@ img {
     opacity: 0
     }
 
-button:focus {
+.btnCSS:focus {
     /*animation*/
     -webkit-animation: extend 1s ease-in-out;
     -ms-animation: extend 1s ease-in-out;
@@ -209,7 +209,7 @@ button:focus {
     animation-fill-mode: forwards
     }
 
-button:focus > span {
+.btnCSS:focus > span {
     /*animation*/
     -webkit-animation: disappear 1s ease-in-out;
     -ms-animation: disappear 1s ease-in-out;
@@ -219,7 +219,7 @@ button:focus > span {
     animation-fill-mode: forwards
     }
 
-button:focus > img {
+.btnCSS:focus > img {
     /*animation*/
     -webkit-animation: appear 1s ease-in-out;
     -ms-animation: appear 1s ease-in-out;
