@@ -161,18 +161,22 @@ function submitQuiz() {
                 incorrectAnswers.push(key);
             }
             answer.checked = false; // Uncheck the selected answer
-        } else {
+        }
+    }
+
+    if (!answered) {
+        alert("No answer is selected. It's important to test your knowledge on fire safety!");
+        return;
+    }
+
+    for (let key in correctAnswers) {
+        if (!document.querySelector(`input[name="${key}"]:checked`)) {
             const correctAnswer = document.querySelector(`input[name="${key}"][value="${correctAnswers[key]}"]`);
             correctAnswer.nextElementSibling.style.color = 'green';
             incorrectAnswers.push(key);
         }
     }
     
-    if (!answered) {
-        alert("No answer is selected. It's important to test your knowledge on fire safety!");
-        return;
-    }
-
     const resultMessage = `You scored ${score} out of ${total}.`;
     document.getElementById('quiz-result').textContent = resultMessage;
 
