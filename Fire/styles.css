@@ -9,6 +9,57 @@
     height: 100%;
 }
  */
+
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,800;1,600&display=swap");
+
+input{
+    width: 0;
+    height: 0;
+}
+.submit{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 30px;
+    background: linear-gradient(90deg, lightblue 0%, deepskyblue 50%, lightblue 100%);
+    border-radius: 30px;
+    cursor: pointer;
+}
+.submit:has(input:checked){
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: springgreen;
+    box-shadow: 0 0 30px 10px springgreen, 0 0 60px 10px lawngreen;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out;
+}
+
+.sub{
+    color: white;
+    font-family: 'source sans 3',sans-serif;
+    font-weight: 700;
+    margin-left: 30px;
+}
+.submit:has(input:checked) .sub{
+    display: none;
+}
+.ok{
+    width: 30px;
+    height: 15px;
+    background-color: transparent;
+    border-left: 5px solid white;
+    border-bottom: 5px solid white;
+    transform: rotate(-45deg);
+    opacity: 0;
+}
+.submit:has(input:checked) .ok{
+    opacity: 1;
+    transform: rotate(-405deg) rotateY(1800deg);
+    transition-delay: 0.2s;
+    transition-duration: 2s;
+}
 $green: #1ECD97;
 $gray: #bbbbbb;
 * {
