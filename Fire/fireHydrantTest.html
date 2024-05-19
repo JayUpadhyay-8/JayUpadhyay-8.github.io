@@ -2,141 +2,143 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fire Hydrant Visualization</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>Fire Departments Visualization</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/d3@5.16.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <style>
-        #mapHydrant {
-            height: 600px;
+        #map {
+            height: 500px;
         }
-        .info {
-            padding: 6px 8px;
-            font: 14px/16px Arial, Helvetica, sans-serif;
-            background: white;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
+        .bar {
+            fill: steelblue;
         }
-        .info h4 {
-            margin: 0 0 5px;
-            color: #777;
+        .bar:hover {
+            fill: orange;
         }
-        .legend {
-            text-align: left;
-            line-height: 18px;
-            color: #555;
-        }
-        .legend i {
-            width: 18px;
-            height: 18px;
-            float: left;
-            margin-right: 8px;
-            opacity: 0.7;
+        .axis-label {
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
-    <h1>Fire Hydrant Visualization</h1>
-    <select id="yearSelect">
-        <option value="">Select Year</option>
-    </select>
-    <div id="mapHydrant"></div>
+    <h2>Number of Fire Departments by Location</h2>
+    <div id="barChart"></div>
+    <h2>Fire Departments Map</h2>
+    <div id="map"></div>
+
     <script>
-        var map = L.map('mapHydrant').setView([42.3601, -71.0589], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
-            maxZoom: 18,
-        }).addTo(map);
+        const sqlQuery = `SELECT * FROM "e4ab410d-5119-4126-8411-8f7700d3c0bf"`;
 
-        var markers = L.layerGroup().addTo(map);
+        axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${encodeURIComponent(sqlQuery)}`)
+            .then(function(response) {
+                const data = response.data.result.records;
 
-        function addMarkers(data) {
-            markers.clearLayers();
-            data.forEach(function(hydrant) {
-                var marker = L.marker([hydrant.Latitude, hydrant.Longitude]).bindPopup(
-                    'Hydrant ID: ' + hydrant._id + '<br>' +
-                    'Address: ' + hydrant.ADDRESS_NU + ' ' + hydrant.STREET_FEA
-                );
-                markers.addLayer(marker);
-            });
-        }
+                // Process data for bar chart
+                const counts = d3.nest()
+                    .key(function(d) { return d.PD; })
+                    .rollup(function(v) { return v.length; })
+                    .entries(data)
+                    .map(function(d) { return { PD: d.key, Count: d.value }; });
 
-        function addAreaHighlights(data) {
-            var areaCounts = {};
-            data.forEach(function(hydrant) {
-                var area = hydrant.PD;
-                if (area) {
-                    if (!areaCounts[area]) {
-                        areaCounts[area] = 0;
-                    }
-                    areaCounts[area]++;
-                }
-            });
+                // Bar Chart
+                const margin = {top: 20, right: 30, bottom: 40, left: 50},
+                      width = 960 - margin.left - margin.right,
+                      height = 500 - margin.top - margin.bottom;
 
-            for (var area in areaCounts) {
-                var areaData = data.filter(h => h.PD === area);
-                var areaLat = areaData.reduce((sum, h) => sum + h.Latitude, 0) / areaData.length;
-                var areaLon = areaData.reduce((sum, h) => sum + h.Longitude, 0) / areaData.length;
+                const svg = d3.select("#barChart").append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", `translate(${margin.left},${margin.top})`);
 
-                L.circle([areaLat, areaLon], {
-                    color: 'blue',
-                    fillColor: '#30f',
-                    fillOpacity: 0.5,
-                    radius: 1000
-                }).bindPopup(area + '<br>Total Hydrants: ' + areaCounts[area]).addTo(map);
-            }
-        }
+                const x = d3.scaleBand()
+                    .domain(counts.map(d => d.PD))
+                    .range([0, width])
+                    .padding(0.1);
 
-        function fetchDataAndInitialize() {
-            var initialSql = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03"`);
-            axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${initialSql}`)
-                .then(function(response) {
-                    var data = response.data.result.records;
-                    addAreaHighlights(data);
+                const y = d3.scaleLinear()
+                    .domain([0, d3.max(counts, d => d.Count)])
+                    .nice()
+                    .range([height, 0]);
 
-                    // Populate year dropdown from unique years in data
-                    var years = [...new Set(data.map(h => h.MANUFACTUR))].sort();
-                    var select = document.getElementById('yearSelect');
-                    years.forEach(function(year) {
-                        var option = document.createElement('option');
-                        option.value = year;
-                        option.text = year;
-                        select.appendChild(option);
-                    });
+                svg.append("g")
+                    .selectAll(".bar")
+                    .data(counts)
+                    .enter().append("rect")
+                    .attr("class", "bar")
+                    .attr("x", d => x(d.PD))
+                    .attr("y", d => y(d.Count))
+                    .attr("width", x.bandwidth())
+                    .attr("height", d => height - y(d.Count));
 
-                    select.addEventListener('change', function() {
-                        var year = this.value;
-                        if (year) {
-                            var sqlQuery = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03" WHERE "MANUFACTUR" LIKE '${year}'`);
-                            axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${sqlQuery}`)
-                                .then(function(response) {
-                                    var yearData = response.data.result.records;
-                                    addMarkers(yearData);
-                                    compareHydrantCounts(data, yearData);
-                                })
-                                .catch(function(error) {
-                                    console.error('Error fetching data:', error);
-                                });
-                        } else {
-                            markers.clearLayers();
-                        }
-                    });
-                })
-                .catch(function(error) {
-                    console.error('Error initializing data:', error);
+                svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", `translate(0,${height})`)
+                    .call(d3.axisBottom(x))
+                    .selectAll("text")
+                    .attr("transform", "rotate(-45)")
+                    .style("text-anchor", "end");
+
+                svg.append("g")
+                    .attr("class", "y axis")
+                    .call(d3.axisLeft(y));
+
+                svg.append("text")
+                    .attr("class", "axis-label")
+                    .attr("x", -height / 2)
+                    .attr("y", -margin.left + 10)
+                    .attr("transform", "rotate(-90)")
+                    .attr("text-anchor", "middle")
+                    .text("Count");
+
+                svg.append("text")
+                    .attr("class", "axis-label")
+                    .attr("x", width / 2)
+                    .attr("y", height + margin.bottom)
+                    .attr("text-anchor", "middle")
+                    .text("Location");
+
+                // Map Visualization
+                var map = L.map('map').setView([42.3601, -71.0589], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+                    maxZoom: 18,
+                }).addTo(map);
+
+                var markers = L.markerClusterGroup().addTo(map);
+
+                data.forEach(function(row) {
+                    var marker = L.marker([row.Y, row.X]).bindPopup(
+                        row.LOCNAME + '<br>Contact: ' + row.LOCCONTACT + '<br>Address: ' + row.LOCADDR
+                    );
+                    markers.addLayer(marker);
                 });
-        }
 
-        function compareHydrantCounts(allData, yearData) {
-            var totalCount = allData.length;
-            var yearCount = yearData.length;
-            alert(`Total Fire Hydrants: ${totalCount}\nFire Hydrants in Selected Year: ${yearCount}`);
-        }
+                // Highlight areas and count fire departments in each area
+                var areaCounts = d3.nest()
+                    .key(function(d) { return d.PD; })
+                    .rollup(function(leaves) { return leaves.length; })
+                    .entries(data);
 
-        // Initialize map and data
-        fetchDataAndInitialize();
+                areaCounts.forEach(function(area) {
+                    var areaData = data.filter(function(d) { return d.PD === area.key; });
+                    var areaLat = d3.mean(areaData, function(d) { return +d.Y; });
+                    var areaLon = d3.mean(areaData, function(d) { return +d.X; });
+
+                    L.circleMarker([areaLat, areaLon], {
+                        radius: 10,
+                        color: 'blue',
+                        fillColor: 'blue',
+                        fillOpacity: 0.6
+                    }).bindPopup(area.key + '<br>Fire Departments: ' + area.value).addTo(map);
+                });
+            })
+            .catch(function(error) {
+                console.error('Error fetching data:', error);
+            });
     </script>
 </body>
 </html>
