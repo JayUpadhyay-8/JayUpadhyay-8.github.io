@@ -350,11 +350,11 @@ const sqlDeptQuery = `SELECT * FROM "e4ab410d-5119-4126-8411-8f7700d3c0bf"`;
                     }
                 };
 
-                var chart = new ApexCharts(document.querySelector("#chart"), options);
+                var chart = new ApexCharts(document.querySelector("#chartDept"), options);
                 chart.render();
 
                 // Map Visualization
-                var map = L.map('map').setView([42.3601, -71.0589], 12);
+                var map = L.map('mapDept').setView([42.3601, -71.0589], 12);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
                     maxZoom: 18,
