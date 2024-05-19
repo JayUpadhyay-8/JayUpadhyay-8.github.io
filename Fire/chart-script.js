@@ -294,3 +294,100 @@ axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${initi
     .catch(function(error) {
         console.error('Error initializing data:', error);
     });
+
+
+const sqlDeptQuery = `SELECT * FROM "e4ab410d-5119-4126-8411-8f7700d3c0bf"`;
+
+        axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${encodeURIComponent(sqlDeptQuery)}`)
+            .then(function(response) {
+                const data = response.data.result.records;
+
+                // Process data for chart
+                const counts = d3.nest()
+                    .key(function(d) { return d.PD; })
+                    .rollup(function(v) { return v.length; })
+                    .entries(data)
+                    .map(function(d) { return { name: d.key, value: d.value }; });
+
+                const chartData = counts.map(d => d.value);
+                const chartCategories = counts.map(d => d.name);
+
+                // Create ApexCharts line chart with stepline curve
+                var options = {
+                    series: [{
+                        name:'Total Number',
+                        data: chartData
+                    }],
+                    chart: {
+                        type: 'line',
+                        height: 350
+                    },
+                    stroke: {
+                        curve: 'stepline',
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    title: {
+                        text: 'Fire Departments by Location',
+                        align: 'left'
+                    },
+                    xaxis: {
+                        categories: chartCategories,
+                        title: {
+                            text: 'Location'
+                        }
+                    },
+                    yaxis: {
+                        title: {
+                            text: 'Count'
+                        }
+                    },
+                    markers: {
+                        hover: {
+                            sizeOffset: 4
+                        }
+                    }
+                };
+
+                var chart = new ApexCharts(document.querySelector("#chart"), options);
+                chart.render();
+
+                // Map Visualization
+                var map = L.map('map').setView([42.3601, -71.0589], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+                    maxZoom: 18,
+                }).addTo(map);
+
+                var markers = L.markerClusterGroup().addTo(map);
+
+                data.forEach(function(row) {
+                    var marker = L.marker([row.Y, row.X]).bindPopup(
+                        row.LOCNAME + '<br>Contact: ' + row.LOCCONTACT + '<br>Address: ' + row.LOCADDR
+                    );
+                    markers.addLayer(marker);
+                });
+
+                // Highlight areas and count fire departments in each area
+                var areaCounts = d3.nest()
+                    .key(function(d) { return d.PD; })
+                    .rollup(function(leaves) { return leaves.length; })
+                    .entries(data);
+
+                areaCounts.forEach(function(area) {
+                    var areaData = data.filter(function(d) { return d.PD === area.key; });
+                    var areaLat = d3.mean(areaData, function(d) { return +d.Y; });
+                    var areaLon = d3.mean(areaData, function(d) { return +d.X; });
+
+                    L.circleMarker([areaLat, areaLon], {
+                        radius: 10,
+                        color: 'blue',
+                        fillColor: 'blue',
+                        fillOpacity: 0.6
+                    }).bindPopup(area.key + '<br>Fire Departments: ' + area.value).addTo(map);
+                });
+            })
+            .catch(function(error) {
+                console.error('Error fetching data:', error);
+            });
