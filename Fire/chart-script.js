@@ -442,7 +442,6 @@ async function fetchFireHydrantData() {
                     curve: 'straight'
                 },
                 title: {
-                    text: 'Number of Fire Hydrants Over 10-Year Intervals',
                     align: 'left'
                 },
                 grid: {
