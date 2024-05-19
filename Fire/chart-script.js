@@ -329,7 +329,6 @@ const sqlDeptQuery = `SELECT * FROM "e4ab410d-5119-4126-8411-8f7700d3c0bf"`;
                         enabled: false
                     },
                     title: {
-                        text: 'Fire Departments by Location',
                         align: 'left'
                     },
                     xaxis: {
