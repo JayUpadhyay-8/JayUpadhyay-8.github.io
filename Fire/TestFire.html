@@ -18,152 +18,6 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
-
-<!--     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/> -->
-<!--     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    
-        <script>
-            L_NO_TOUCH = false;
-            L_DISABLE_3D = false;
-        </script>
-    
-    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
-    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
-    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
-    
-            <meta name="viewport" content="width=device-width,
-                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-            <style>
-                #map_668cb7857127bba4a1759efe9e4ab69c {
-                    position: relative;
-                    width: 100.0%;
-                    height: 100.0%;
-                    left: 0.0%;
-                    top: 0.0%;
-                }
-                .leaflet-container { font-size: 1rem; }
-            </style>
-        
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
- -->
-<!--     <style>
-        body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        }
-        .header, .footer {
-            background-color: #111;
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-        }
-        .header-image {
-            width: 100px;
-            margin: 0 auto;
-            display: block;
-        }
-        .section {
-            padding: 40px 20px;
-        }
-        #mapid, #choroplethMap, #map {
-            height: 500px;
-            margin-top: 20px;
-        }
-        #mapid, #mapHydrant {
-            height: 600px;
-        }
-      :root {
-            --glitter: url("https://assets.codepen.io/13471/silver-glitter-background.png");
-        }
-        
-        .fire::before,
-        .fire::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-        }
-        
-        .fire::before {
-            background-image: var(--glitter), var(--glitter),
-                linear-gradient(
-                    0deg,
-                    white 0px,
-                    rgba(255, 137, 81, 0.8) 5px,
-                    rgba(220, 188, 22, 0.6) 30%,
-                    transparent 70%
-                ),
-                radial-gradient(ellipse at bottom, transparent 30%, black 60%);
-            background-size: 350px 500px, 400px 650px, 100% 100%, 100% 100%;
-            background-blend-mode: hard-light, color-dodge, multiply;
-            background-position: 0px 0px, 0px 0px, var(--gradientPos);
-            background-repeat: repeat, repeat, repeat, no-repeat;
-            mix-blend-mode: color-dodge;
-            filter: brightness(2.5) blur(7px) contrast(4);
-            animation: fire 1.75s linear infinite;
-            box-shadow: inset 0 -40px 50px -60px #63bbc5;
-        }
-        
-        @keyframes fire {
-            0% {
-                background-position: center 0px, center 0px, 50% 100%, center center;
-            }
-            100% {
-                background-position: center -500px, center -650px, 50% 100%, center center;
-            }
-        }
-        
-        html, body {
-            min-width: 100%;
-            min-height: 100%;
-        }
-        
-        .fire {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .header {
-            position: relative;
-            z-index: 2;
-            color: #fff; /* Change text color for better visibility */
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Add text shadow for better readability */
-        }
-
-
-        h1, h2 {
-            text-align: center;
-        }
-        .center {  
-        display: block;
-        margin-right: auto;
-        margin-left: auto;
-        }  
-    </style> -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-100">
@@ -175,9 +29,6 @@
     </header>
 
     <section class="section bg-white">
-<!--         <h2 class="text-2xl font-semibold">Introduction</h2>
-        <p class="mt-4">Welcome to "Boston Fires," an interactive web app designed to educate and prepare you for fire safety. Through this journey, you will explore fire incidents in Boston, understand the strategic placement of fire departments and hydrants, and gain valuable knowledge to combat fire hazards.</p>
-        <h1>Welcome to "Boston Fires" 🚒🔥</h1>-->
         <p>Welcome to <strong>"Boston Fires"</strong>, an interactive web application designed to educate and prepare you for fire safety. This educational journey allows you to explore fire incidents across Boston, understand the strategic placement of fire departments and hydrants, and equip yourself with essential knowledge to combat fire hazards. 🏢🔥</p>
         <p>Immerse yourself in the history with a special feature on the Great Boston Fire of 1872. Dive deep into how this monumental event shaped fire safety protocols today. 📚🔥</p>
         <p>Enjoy your exploration and stay safe! 🚒🛡️</p>
@@ -205,14 +56,6 @@
             <canvas id="neighborhoodPieChart" style="width: 700px; height: 700px; display: flex; justify-content: center; margin: 20px auto;"></canvas>
         </div>
     
-<!--         <div id="quiz-section">
-            <h2>Test Your Fire Safety Knowledge! 🔥</h2>
-            <div id="quiz"></div>
-            <button class = "btnCSS" onclick="submitQuiz()">Submit</button>
-    
-            <div id="quiz-result"></div>
-    
-        </div> -->
     </section>
     
     <section class="section bg-white">
@@ -241,7 +84,7 @@
         <p>Now, let's check out the fire department locations on the map! 🗺️ The markers show the exact locations of the fire stations. You can click on them to get more details about each station. 🚒🖱️ The blue circles represent the areas. Click on them to see how many fire departments are in each area. 🔵📍</p>
         <h2 class="text-2xl font-semibold">Fire Departments Map</h2>
         <div id="mapDept"></div>
-<!--         <div class="folium-map" id="map_668cb7857127bba4a1759efe9e4ab69c" ></div> -->
+
     </section>
 
     <section class="section">
@@ -250,13 +93,13 @@
         <p>The community rallied together, with businesses donating funds and resources to aid in the reconstruction. Temporary shelters and relief funds helped the displaced residents get back on their feet. Slowly, the charred remains of the city began to give way to new buildings and infrastructure, symbolizing a fresh start.</p>
         <p>The government has been proactive in increasing the number of fire hydrants to prevent such situations. 🚒 Fire hydrants are regularly inspected and replaced every few years. Let's take a look at how many fire hydrants are in Boston, shown by their year of manufacture. 📅🚰</p>
         
-<!--         <h2 class="text-2xl font-semibold">Fire Hydrants</h2> -->
+
         <h2 class="text-2xl font-semibold">Number of Fire Hydrants Over 10-Year Intervals</h2>
         <div id="chartHydrant"></div>
         <p>For a more accurate and better visualization, let's see where the fire hydrants are placed on the map. 🗺️ You can click on the markers to learn more details about each hydrant. 🔍🚰 Use the dropdown menu to select the manufacture year and see the corresponding fire hydrants on the map. 📅👇</p>
         <select id="yearSelect">
         <option value="">Select a Manufacture Year</option>
-        <!-- Options will be populated by JavaScript -->
+
     </select>
     <div id="mapHydrant"></div>
     </section>
@@ -267,174 +110,13 @@
         <p>The fire department itself underwent significant changes, with better training, equipment, and organization to prepare for future emergencies. The lessons learned from the Great Fire led to a city-wide emphasis on fire safety and prevention, ensuring that Boston would be better protected in the future.</p>
         <p>Today, as Bostonians walk through the modern city, they can still feel the echoes of that fateful night in 1872. The Great Fire remains a poignant reminder of the city’s resilience and capacity for renewal. The fire incident reports, the locations of fire departments, and the network of fire hydrants now stand as silent sentinels, guarding against the flames and ensuring that Boston’s spirit will never be extinguished again.</p>
     
-    <div class="trigger_fworks">Send/Complete Button For Fireworks</div>
-      <div class="fireworks">
-        <div id="ya-message">Congradutation! You new have completed X.</div>
-      </div>
     </section>
         <footer class="footer">
         <p>Created with ❤️ by Jay Upadhyay for the beautiful city of Boston.</p>
     </footer>
 
     <script src="chart-script.js"></script>
-<!--     <script src="fireDepartmentMap.js"></script> -->
-    <script>
-        // Fire Hydrants Map using Leaflet
-        // var map = L.map('mapHydrant').setView([42.3601, -71.0589], 12);
-        // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        //     attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
-        //     maxZoom: 18,
-        // }).addTo(map);
 
-        // var markers = L.layerGroup().addTo(map);
-
-        // function addMarkers(data) {
-        //     markers.clearLayers();
-        //     data.forEach(function(hydrant) {
-        //         var marker = L.marker([hydrant.Y, hydrant.X]).bindPopup(
-        //             'Hydrant ID: ' + hydrant._id + '<br>' +
-        //             'Address: ' + hydrant.ADDRESS_NU + ' ' + hydrant.STREET_FEA
-        //         );
-        //         markers.addLayer(marker);
-        //     });
-        // }
-
-        // document.getElementById('yearSelect').addEventListener('change', function() {
-        //     var year = this.value;
-        //     if (year) {
-        //         var sqlQuery = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03" WHERE "MANUFACTUR" LIKE '${year}'`);
-        //         axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${sqlQuery}`)
-        //             .then(function(response) {
-        //                 addMarkers(response.data.result.records);
-        //             })
-        //             .catch(function(error) {
-        //                 console.error('Error fetching data:', error);
-        //             });
-        //     } else {
-        //         markers.clearLayers();
-        //     }
-        // });
-
-        // // Initially fetch all data to populate year dropdown
-        // var initialSql = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03"`);
-        // axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${initialSql}`)
-        //     .then(function(response) {
-        //         // Populate year dropdown from unique years in data
-        //         var years = [...new Set(response.data.result.records.map(h => h.MANUFACTUR))];
-        //         var select = document.getElementById('yearSelect');
-        //         years.forEach(function(year) {
-        //             var option = document.createElement('option');
-        //             option.value = year;
-        //             option.text = year;
-        //             select.appendChild(option);
-        //         });
-        //     })
-        //     .catch(function(error) {
-        //         console.error('Error initializing data:', error);
-        //     });
-
-        // // Function to fetch data
-        // async function fetchData(sqlQuery) {
-        //     const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=${encodeURIComponent(sqlQuery)}`;
-        //     const response = await fetch(url);
-        //     const data = await response.json();
-        //     return data.result.records;
-        // }
-
-        // // Function to process data for a chart
-        // function processData(records, key) {
-        //     const counts = {};
-        //     records.forEach(record => {
-        //         if (record[key]) {
-        //             counts[record[key]] = (counts[record[key]] || 0) + 1;
-        //         }
-        //     });
-        //     return counts;
-        // }
-
-        // // Function to create a chart
-        // function createChart(ctx, title, labels, data) {
-        //     new Chart(ctx, {
-        //         type: 'bar',
-        //         data: {
-        //             labels: labels,
-        //             datasets: [{
-        //                 label: title,
-        //                 data: data,
-        //                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        //                 borderColor: 'rgba(255, 99, 132, 1)',
-        //                 borderWidth: 1
-        //             }]
-        //         },
-        //         options: {
-        //             scales: {
-        //                 y: {
-        //                     beginAtZero: true
-        //                 }
-        //             }
-        //         }
-        //     });
-        // }
-
-        // function setupQuiz() {
-        //     const quiz = document.getElementById('quiz');
-        //     quiz.innerHTML = '<p>What should you do if your clothes catch fire?</p>' +
-        //                      '<input type="radio" id="stop" name="fire" value="stop"><label for="stop">Stop, Drop, and Roll</label><br>' +
-        //                      '<input type="radio" id="run" name="fire" value="run"><label for="run">Run</label><br>';
-        // }
-
-        // function submitQuiz() {
-        //     const answer = document.querySelector('input[name="fire"]:checked').value;
-        //     alert(answer === "stop" ? "Correct!" : "Oops! The right answer is Stop, Drop, and Roll.");
-        // }
-
-        // // Main function to render charts
-        // async function renderCharts() {
-        //     const incidentTypeSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "incident_description" IS NOT NULL`;
-        //     const districtSql = `SELECT * from "91a38b1f-8439-46df-ba47-a30c48845e06" WHERE "district" IS NOT NULL`;
-
-        //     // Incident Type Chart
-        //     const incidentRecords = await fetchData(incidentTypeSql);
-        //     const incidentTypeCounts = processData(incidentRecords, 'incident_description');
-        //     const incidentTypeCtx = document.getElementById('incidentTypeChart').getContext('2d');
-        //     createChart(incidentTypeCtx, 'Incident Types', Object.keys(incidentTypeCounts), Object.values(incidentTypeCounts));
-
-        //     // District Chart
-        //     const districtRecords = await fetchData(districtSql);
-        //     const districtCounts = processData(districtRecords, 'district');
-        //     const districtCtx = document.getElementById('districtChart').getContext('2d');
-        //     createChart(districtCtx, 'Incidents by District', Object.keys(districtCounts), Object.values(districtCounts));
-        // }
-
-        // renderCharts();
-        // document.onload = setupQuiz();
-
-        // // D3.js Map for Fire Hydrants
-        // const svg = d3.select("#map").attr("width", 800).attr("height", 600);
-        // const projection = d3.geoMercator()
-        //                      .center([-71.0589, 42.3601]) // Longitude and latitude of Boston
-        //                      .scale(100000) // Scale for zooming into the city
-        //                      .translate([400, 300]);
-
-        // const path = d3.geoPath().projection(projection);
-
-        // // Fetch data from Boston Data API
-        // d3.json(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "1479a183-dde0-46a6-a828-f526df010a03"`)
-        //     .then(data => {
-        //         const hydrants = data.result.records;
-        //         hydrants.forEach(d => {
-        //             if (!isNaN(parseFloat(d.Longitude)) && !isNaN(parseFloat(d.Latitude))) {
-        //                 svg.append("circle")
-        //                    .attr("cx", projection([parseFloat(d.Longitude), parseFloat(d.Latitude)])[0])
-        //                    .attr("cy", projection([parseFloat(d.Longitude), parseFloat(d.Latitude)])[1])
-        //                    .attr("r", 5)
-        //                    .style("fill", "red")
-        //                    .append("title")
-        //                    .text(`ID: ${d._id}, Location: ${d.PLACEMENT_}`);
-        //             }
-        //         });
-        //     })
-        //     .catch(err => console.error('Error loading the map data:', err));
-    </script>
+    
 </body>
 </html>
