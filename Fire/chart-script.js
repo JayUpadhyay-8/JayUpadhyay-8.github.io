@@ -251,7 +251,8 @@ var map = L.map('mapHydrant').setView([42.3601, -71.0589], 12);
             data.forEach(function(hydrant) {
                 var marker = L.marker([hydrant.Y, hydrant.X]).bindPopup(
                     'Hydrant ID: ' + hydrant._id + '<br>' +
-                    'Address: ' + hydrant.ADDRESS_NU + ' ' + hydrant.STREET_FEA
+                    'Address: ' + hydrant.ADDRESS_NU + ' ' + hydrant.STREET_FEA + '<br>' +
+                    'Owner Code: ' + hydrant.OWNER_CODE
                 );
                 markers.addLayer(marker);
             });
