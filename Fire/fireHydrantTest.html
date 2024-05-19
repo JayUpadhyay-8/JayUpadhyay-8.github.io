@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Hydrant Visualization</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        #mapHydrant {
+            height: 600px;
+        }
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+        .legend {
+            text-align: left;
+            line-height: 18px;
+            color: #555;
+        }
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fire Hydrant Visualization</h1>
+    <select id="yearSelect">
+        <option value="">Select Year</option>
+    </select>
+    <div id="mapHydrant"></div>
+    <script>
+        var map = L.map('mapHydrant').setView([42.3601, -71.0589], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+            maxZoom: 18,
+        }).addTo(map);
+
+        var markers = L.layerGroup().addTo(map);
+
+        function addMarkers(data) {
+            markers.clearLayers();
+            data.forEach(function(hydrant) {
+                var marker = L.marker([hydrant.Y, hydrant.X]).bindPopup(
+                    'Hydrant ID: ' + hydrant._id + '<br>' +
+                    'Address: ' + hydrant.ADDRESS_NU + ' ' + hydrant.STREET_FEA
+                );
+                markers.addLayer(marker);
+            });
+        }
+
+        function addAreaHighlights(data) {
+            var areaCounts = {};
+            data.forEach(function(hydrant) {
+                var area = hydrant.PD;
+                if (area) {
+                    if (!areaCounts[area]) {
+                        areaCounts[area] = 0;
+                    }
+                    areaCounts[area]++;
+                }
+            });
+
+            for (var area in areaCounts) {
+                var areaData = data.filter(h => h.PD === area);
+                var areaLat = areaData.reduce((sum, h) => sum + h.Y, 0) / areaData.length;
+                var areaLon = areaData.reduce((sum, h) => sum + h.X, 0) / areaData.length;
+
+                L.circle([areaLat, areaLon], {
+                    color: 'blue',
+                    fillColor: '#30f',
+                    fillOpacity: 0.5,
+                    radius: 1000
+                }).bindPopup(area + '<br>Total Hydrants: ' + areaCounts[area]).addTo(map);
+            }
+        }
+
+        function fetchDataAndInitialize() {
+            var initialSql = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03"`);
+            axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${initialSql}`)
+                .then(function(response) {
+                    var data = response.data.result.records;
+                    addAreaHighlights(data);
+
+                    // Populate year dropdown from unique years in data
+                    var years = [...new Set(data.map(h => h.MANUFACTUR))];
+                    var select = document.getElementById('yearSelect');
+                    years.forEach(function(year) {
+                        var option = document.createElement('option');
+                        option.value = year;
+                        option.text = year;
+                        select.appendChild(option);
+                    });
+
+                    select.addEventListener('change', function() {
+                        var year = this.value;
+                        if (year) {
+                            var sqlQuery = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03" WHERE "MANUFACTUR" LIKE '${year}'`);
+                            axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${sqlQuery}`)
+                                .then(function(response) {
+                                    var yearData = response.data.result.records;
+                                    addMarkers(yearData);
+                                    compareHydrantCounts(data, yearData);
+                                })
+                                .catch(function(error) {
+                                    console.error('Error fetching data:', error);
+                                });
+                        } else {
+                            markers.clearLayers();
+                        }
+                    });
+                })
+                .catch(function(error) {
+                    console.error('Error initializing data:', error);
+                });
+        }
+
+        function compareHydrantCounts(allData, yearData) {
+            var totalCount = allData.length;
+            var yearCount = yearData.length;
+            alert(`Total Fire Hydrants: ${totalCount}\nFire Hydrants in Selected Year: ${yearCount}`);
+        }
+
+        // Initialize map and data
+        fetchDataAndInitialize();
+    </script>
+</body>
+</html>
