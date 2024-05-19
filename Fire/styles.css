@@ -66,6 +66,10 @@ input{
             width: 100%;
             height: 500px;
         }
+#chartHydrant {
+            width: 100%;
+            height: 350px;
+        }
 body {
 /*             font-family: Arial, sans-serif; */
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
