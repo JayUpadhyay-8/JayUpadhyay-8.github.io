@@ -279,6 +279,7 @@ var map = L.map('mapHydrant').setView([42.3601, -71.0589], 12);
             .then(function(response) {
                 // Populate year dropdown from unique years in data
                 var years = [...new Set(response.data.result.records.map(h => h.MANUFACTUR))];
+                years.sort();
                 var select = document.getElementById('yearSelect');
                 years.forEach(function(year) {
                     var option = document.createElement('option');
