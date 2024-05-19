@@ -55,7 +55,7 @@
         function addMarkers(data) {
             markers.clearLayers();
             data.forEach(function(hydrant) {
-                var marker = L.marker([hydrant.Y, hydrant.X]).bindPopup(
+                var marker = L.marker([hydrant.Latitude, hydrant.Longitude]).bindPopup(
                     'Hydrant ID: ' + hydrant._id + '<br>' +
                     'Address: ' + hydrant.ADDRESS_NU + ' ' + hydrant.STREET_FEA
                 );
@@ -77,8 +77,8 @@
 
             for (var area in areaCounts) {
                 var areaData = data.filter(h => h.PD === area);
-                var areaLat = areaData.reduce((sum, h) => sum + h.Y, 0) / areaData.length;
-                var areaLon = areaData.reduce((sum, h) => sum + h.X, 0) / areaData.length;
+                var areaLat = areaData.reduce((sum, h) => sum + h.Latitude, 0) / areaData.length;
+                var areaLon = areaData.reduce((sum, h) => sum + h.Longitude, 0) / areaData.length;
 
                 L.circle([areaLat, areaLon], {
                     color: 'blue',
@@ -97,7 +97,7 @@
                     addAreaHighlights(data);
 
                     // Populate year dropdown from unique years in data
-                    var years = [...new Set(data.map(h => h.MANUFACTUR))];
+                    var years = [...new Set(data.map(h => h.MANUFACTUR))].sort();
                     var select = document.getElementById('yearSelect');
                     years.forEach(function(year) {
                         var option = document.createElement('option');
