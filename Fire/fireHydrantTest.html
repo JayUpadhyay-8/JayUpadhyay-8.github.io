@@ -27,14 +27,17 @@
 
         function processHydrantData(records) {
             const intervalCounts = {};
+            for (let year = 1900; year <= 2024; year += 10) {
+                intervalCounts[year] = 0;
+            }
+
             records.forEach(record => {
                 const year = parseInt(record.MANUFACTUR);
                 if (!isNaN(year) && year > 0) {
                     const interval = Math.floor(year / 10) * 10;
-                    if (!intervalCounts[interval]) {
-                        intervalCounts[interval] = 0;
+                    if (intervalCounts[interval] !== undefined) {
+                        intervalCounts[interval]++;
                     }
-                    intervalCounts[interval]++;
                 }
             });
             return Object.entries(intervalCounts).sort((a, b) => a[0] - b[0]);
