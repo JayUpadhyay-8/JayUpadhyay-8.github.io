@@ -239,56 +239,69 @@ renderCharts();
 
 
 var map = L.map('mapHydrant').setView([42.3601, -71.0589], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
-            maxZoom: 18,
-        }).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+    maxZoom: 18,
+}).addTo(map);
 
-        var markers = L.layerGroup().addTo(map);
+var markers = L.layerGroup().addTo(map);
 
-        function addMarkers(data) {
-            markers.clearLayers();
-            data.forEach(function(hydrant) {
-                var marker = L.marker([hydrant.Y, hydrant.X]).bindPopup(
-                    'Hydrant ID: ' + hydrant._id + '<br>' +
-                    'Address: ' + hydrant.ADDRESS_NU + ' ' + hydrant.STREET_FEA + '<br>' +
-                    'Owner Code: ' + hydrant.OWNER_CODE
-                );
-                markers.addLayer(marker);
-            });
-        }
+function addMarkers(data) {
+    markers.clearLayers();
+    data.forEach(function(hydrant) {
+        var marker = L.marker([hydrant.Y, hydrant.X]).bindPopup(
+            'Hydrant ID: ' + hydrant._id + '<br>' +
+            'Address: ' + hydrant.ADDRESS_NU + ' ' + hydrant.STREET_FEA + '<br>' +
+            'Owner Code: ' + hydrant.OWNER_CODE
+        );
+        markers.addLayer(marker);
+    });
+}
 
-        document.getElementById('yearSelect').addEventListener('change', function() {
-            var year = this.value;
-            if (year) {
-                var sqlQuery = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03" WHERE "MANUFACTUR" LIKE '${year}'`);
-                axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${sqlQuery}`)
-                    .then(function(response) {
-                        addMarkers(response.data.result.records);
-                    })
-                    .catch(function(error) {
-                        console.error('Error fetching data:', error);
-                    });
-            } else {
-                markers.clearLayers();
-            }
+document.getElementById('yearSelect').addEventListener('change', function() {
+    var year = this.value;
+    if (year === "Unknown") {
+        var sqlQuery = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03" WHERE "MANUFACTUR" IN ('-999', '0', '200', '209')`);
+    } else if (year) {
+        var sqlQuery = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03" WHERE "MANUFACTUR" LIKE '${year}'`);
+    } else {
+        markers.clearLayers();
+        return;
+    }
+
+    axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${sqlQuery}`)
+        .then(function(response) {
+            addMarkers(response.data.result.records);
+        })
+        .catch(function(error) {
+            console.error('Error fetching data:', error);
+        });
+});
+
+// Initially fetch all data to populate year dropdown
+var initialSql = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03"`);
+axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${initialSql}`)
+    .then(function(response) {
+        // Populate year dropdown from unique years in data
+        var years = [...new Set(response.data.result.records.map(h => h.MANUFACTUR))];
+        var knownYears = years.filter(year => !['-999', '0', '200', '209'].includes(year));
+        knownYears.sort(); // Sort years in ascending order
+
+        var select = document.getElementById('yearSelect');
+        knownYears.forEach(function(year) {
+            var option = document.createElement('option');
+            option.value = year;
+            option.text = year;
+            select.appendChild(option);
         });
 
-        // Initially fetch all data to populate year dropdown
-        var initialSql = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03"`);
-        axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${initialSql}`)
-            .then(function(response) {
-                // Populate year dropdown from unique years in data
-                var years = [...new Set(response.data.result.records.map(h => h.MANUFACTUR))];
-                years.sort();
-                var select = document.getElementById('yearSelect');
-                years.forEach(function(year) {
-                    var option = document.createElement('option');
-                    option.value = year;
-                    option.text = year;
-                    select.appendChild(option);
-                });
-            })
-            .catch(function(error) {
-                console.error('Error initializing data:', error);
-            });
+        // Add "Unknown" option for invalid years
+        var unknownOption = document.createElement('option');
+        unknownOption.value = 'Unknown';
+        unknownOption.text = 'Unknown';
+        select.appendChild(unknownOption);
+    })
+    .catch(function(error) {
+        console.error('Error initializing data:', error);
+    });
+
