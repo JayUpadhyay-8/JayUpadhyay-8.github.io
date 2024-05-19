@@ -24,7 +24,7 @@
     <h2>Distribution of Fire Departments by Location</h2>
     <div id="chart"></div>
     <h2>Fire Departments Map</h2>
-    <div id="map"></div>
+    <div id="mapDept"></div>
 
     <script>
         const sqlQuery = `SELECT * FROM "e4ab410d-5119-4126-8411-8f7700d3c0bf"`;
@@ -85,7 +85,7 @@
                 chart.render();
 
                 // Map Visualization
-                var map = L.map('map').setView([42.3601, -71.0589], 12);
+                var map = L.map('mapDept').setView([42.3601, -71.0589], 12);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
                     maxZoom: 18,
