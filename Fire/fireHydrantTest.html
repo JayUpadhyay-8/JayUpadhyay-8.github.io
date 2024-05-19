@@ -90,8 +90,8 @@
                         yAxis: yAxis,
                         valueYField: "value",
                         sequencedInterpolation: true,
-                        categoryXField: "name",
-                        tooltip: am5.Tooltip.new(root, { dy: -25, labelText: "{valueY}" })
+                        categoryXField: "name"
+                        
                     }));
                     series.columns.template.setAll({ cornerRadiusTL: 5, cornerRadiusTR: 5, strokeOpacity: 0 });
                     series.columns.template.adapters.add("fill", (fill, target) => chart.get("colors").getIndex(series.columns.indexOf(target)));
