@@ -12,20 +12,30 @@
         #map {
             height: 500px;
         }
-        .bar {
-            fill: steelblue;
+        .arc text {
+            font: 10px sans-serif;
+            text-anchor: middle;
         }
-        .bar:hover {
-            fill: orange;
+        .arc path {
+            stroke: #fff;
         }
-        .axis-label {
-            font-size: 12px;
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            width: 120px;
+            height: 28px;
+            padding: 2px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <h2>Number of Fire Departments by Location</h2>
-    <div id="barChart"></div>
+    <h2>Distribution of Fire Departments by Location</h2>
+    <div id="pieChart"></div>
     <h2>Fire Departments Map</h2>
     <div id="map"></div>
 
@@ -36,70 +46,66 @@
             .then(function(response) {
                 const data = response.data.result.records;
 
-                // Process data for bar chart
+                // Process data for pie chart
                 const counts = d3.nest()
                     .key(function(d) { return d.PD; })
                     .rollup(function(v) { return v.length; })
                     .entries(data)
                     .map(function(d) { return { PD: d.key, Count: d.value }; });
 
-                // Bar Chart
-                const margin = {top: 20, right: 30, bottom: 40, left: 50},
-                      width = 960 - margin.left - margin.right,
-                      height = 500 - margin.top - margin.bottom;
+                // Pie Chart
+                const width = 450,
+                      height = 450,
+                      radius = Math.min(width, height) / 2;
 
-                const svg = d3.select("#barChart").append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
+                const svg = d3.select("#pieChart").append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
                     .append("g")
-                    .attr("transform", `translate(${margin.left},${margin.top})`);
+                    .attr("transform", `translate(${width / 2},${height / 2})`);
 
-                const x = d3.scaleBand()
-                    .domain(counts.map(d => d.PD))
-                    .range([0, width])
-                    .padding(0.1);
+                const pie = d3.pie()
+                    .sort(null)
+                    .value(d => d.Count);
 
-                const y = d3.scaleLinear()
-                    .domain([0, d3.max(counts, d => d.Count)])
-                    .nice()
-                    .range([height, 0]);
+                const arc = d3.arc()
+                    .outerRadius(radius - 10)
+                    .innerRadius(0);
 
-                svg.append("g")
-                    .selectAll(".bar")
-                    .data(counts)
-                    .enter().append("rect")
-                    .attr("class", "bar")
-                    .attr("x", d => x(d.PD))
-                    .attr("y", d => y(d.Count))
-                    .attr("width", x.bandwidth())
-                    .attr("height", d => height - y(d.Count));
+                const labelArc = d3.arc()
+                    .outerRadius(radius - 40)
+                    .innerRadius(radius - 40);
 
-                svg.append("g")
-                    .attr("class", "x axis")
-                    .attr("transform", `translate(0,${height})`)
-                    .call(d3.axisBottom(x))
-                    .selectAll("text")
-                    .attr("transform", "rotate(-45)")
-                    .style("text-anchor", "end");
+                const tooltip = d3.select("body").append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0);
 
-                svg.append("g")
-                    .attr("class", "y axis")
-                    .call(d3.axisLeft(y));
+                const g = svg.selectAll(".arc")
+                    .data(pie(counts))
+                    .enter().append("g")
+                    .attr("class", "arc");
 
-                svg.append("text")
-                    .attr("class", "axis-label")
-                    .attr("x", -height / 2)
-                    .attr("y", -margin.left + 10)
-                    .attr("transform", "rotate(-90)")
-                    .attr("text-anchor", "middle")
-                    .text("Count");
+                g.append("path")
+                    .attr("d", arc)
+                    .style("fill", function(d, i) { return d3.schemeCategory10[i]; })
+                    .on("mouseover", function(event, d) {
+                        tooltip.transition()
+                            .duration(200)
+                            .style("opacity", .9);
+                        tooltip.html(d.data.PD + "<br>" + d.data.Count)
+                            .style("left", (event.pageX) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+                    })
+                    .on("mouseout", function(d) {
+                        tooltip.transition()
+                            .duration(500)
+                            .style("opacity", 0);
+                    });
 
-                svg.append("text")
-                    .attr("class", "axis-label")
-                    .attr("x", width / 2)
-                    .attr("y", height + margin.bottom)
-                    .attr("text-anchor", "middle")
-                    .text("Location");
+                g.append("text")
+                    .attr("transform", function(d) { return `translate(${labelArc.centroid(d)})`; })
+                    .attr("dy", ".35em")
+                    .text(d => d.data.PD);
 
                 // Map Visualization
                 var map = L.map('map').setView([42.3601, -71.0589], 12);
