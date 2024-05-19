@@ -1,3 +1,304 @@
+@import url("https://fonts.googleapis.com/css2?family=Muli:ital,wght@1,600&display=swap");
+
+:root {
+  --color: #ff5959;
+  --width: 600px;
+  --height: 280px;
+  --parachoque-color: #a4a9ad;
+  --farol-color: #ffb819;
+  --pneu-color: #a4a9ad;
+  --escada-color: #a4a9ad;
+  --cinza-color: #d1d3d3;
+  --janela-color: #333e48;
+  --sirene-color: #ff8189;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Muli", sans-serif;
+  transition: 1s;
+  overflow: hidden;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100vh;
+  transform: translateX(0);
+  animation: moving 6s ease-in infinite forwards;
+}
+.truck {
+  width: var(--width);
+  height: var(--height);
+  background-color: var(--color);
+  border-radius: calc(var(--width) / 20);
+  position: relative;
+}
+
+.pneu,
+.pneu::before {
+  content: '';
+  display:block;
+  position: relative;
+  top: 0;
+  background-color: #a4a9ad;
+  width: calc(var(--width) / 10);
+  height: calc(var(--width) / 10);
+  border-radius: 50%;
+  box-shadow: 
+    0 0 0 calc(var(--width) / 70) var(--pneu-color), 
+    0 0 0 calc(var(--width) / 15) #333e48,
+    11px calc(var(--height) / 8) calc(var(--width) / 30) rgba(0,0,0,.4),
+    -1px calc(var(--width) / -40) 0px calc(var(--width) / 16.21) #cc4747;
+
+  transform:translate(calc(var(--width) / 5),calc(var(--width) / 2.5));
+  animation: pneu .3s ease-out infinite alternate forwards;
+}
+
+.pneu::before{
+  transform:translate(calc(var(--width) / 2),0);
+}
+
+.parachoque::before,
+.parachoque::after {
+  content: "";
+  display: block;
+  background-color: var(--parachoque-color);
+  height: calc(var(--width) / 12);
+  border-radius: calc(var(--width) / 60);
+}
+.parachoque::before {
+  float: left;
+  transform: translate(calc(var(--width) / -30), calc(var(--height) / 1.65));
+  width: calc(var(--width) / 12);
+}
+.parachoque::after {
+  float: right;
+  transform: translate(calc(var(--width) / 30), calc(var(--height) / 1.65));
+  width: calc(var(--width) / 10);
+}
+.escapamento {
+  background-color: rgba(0, 0, 0, 0.5);
+  filter: blur(20px);
+  width: calc(var(--width) / 6);
+  height: calc(var(--height) / 18.66);
+  position: absolute;
+  bottom: 6%;
+  left: calc(var(--width) / -5.45);
+  transform: scale(0.2);
+  transform-origin: right;
+  animation: escapamento 6s ease-out infinite both;
+}
+.farol::before,
+.farol::after {
+  content: "";
+  display: block;
+  background-color: var(--farol-color);
+  height: calc(var(--width) / 15);
+}
+.farol::before {
+  float: left;
+  transform: translate(calc(var(--width) / -12), calc(var(--height) / 2.2));
+  width: calc(var(--width) / 13);
+  border-radius: 0 10px 10px 0;
+}
+.farol::after {
+  float: right;
+  transform: translate(calc(var(--width) / 10), calc(var(--height) / 2.2));
+  width: calc(var(--width) / 13);
+  border-radius: 10px 0 0 10px;
+  transition: 1s;
+  animation: farol 0.2s ease-out infinite 2s alternate forwards;
+}
+
+.escada {
+  background-color: var(--escada-color);
+  height: calc(var(--height) / 1.7);
+  width: calc(var(--width) / 6);
+  margin: 0 auto;
+  transform: translateY(calc(var(--height) / 5));
+  position: relative;
+  z-index: 2;
+  padding-top: calc(var(--width) / 30);
+}
+.escada div {
+  background-color: var(--cinza-color);
+  width: 80%;
+  height: calc(var(--width) / 30);
+  margin: calc(var(--width) / 30) auto;
+  border-radius: calc(var(--width) / 60);
+}
+.listra {
+  background-color: var(--farol-color);
+  height: calc(var(--height) / 10);
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  bottom: calc(var(--height) / 3.73);
+}
+.listra::before {
+  content: "Fire Department";
+  display: block;
+  padding: calc(var(--height) / 56) 16px;
+  color: #444;
+  text-transform: uppercase;
+  font-size: calc(var(--height) / 21.53);
+}
+.janela,
+.janela::before {
+  background-color: var(--janela-color);
+  height: calc(var(--height) / 4);
+  width: calc(var(--width) / 6);
+  position: absolute;
+  z-index: 2;
+  top: 10%;
+  right: 7%;
+  border-radius: calc(var(--width) / 60);
+  box-shadow: inset 0px 11px 0 2px #2e3841;
+}
+.janela::after {
+  content: "";
+  display: block;
+  background-color: #2e3841;
+  box-shadow: calc(var(--height) / 6.51) 6px 0px 0px #2e3841;
+  position: absolute;
+  z-index: 3;
+  width: calc(var(--height) / 7);
+  height: calc(var(--height) / 7);
+  border-radius: 25% / 50%;
+  top: calc(var(--height) / 18.66);
+  left: calc(var(--width) / 60);
+}
+.janela::before {
+  content: "";
+  display: block;
+  right: calc((var(--width) / 20) + (var(--width) / 6));
+  width: calc(var(--width) / 8);
+  top: 0;
+}
+.sirene {
+  position: absolute;
+  width: calc(var(--width) / 9);
+  height: calc(var(--width) / 4);
+  border-radius: 50% / 10%;
+  top: calc(var(--width) / -12);
+  right: calc(var(--width) / 12);
+  z-index: -1;
+}
+.sirene::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--height) / 20);
+  bottom: calc(var(--height) / 20);
+  right: calc(var(--height) / -20);
+  left: calc(var(--height) / -20);
+  background-color: var(--sirene-color);
+  border-radius: 25% / 50%;
+  box-shadow: inset -5px 1px 19px rgba(0, 0, 0, 0.2);
+  animation: sirene 0.2s ease infinite alternate forwards;
+}
+
+.escada-topo {
+  position: absolute;
+  background-color: var(--cinza-color);
+  width: calc(var(--width) / 1.5);
+  height: calc(var(--height) / 7);
+  border-radius: calc(var(--width) / 60);
+  display: flex;
+  top: calc(var(--height) / -3.58);
+  left: calc(var(--width) / 30);
+}
+.escada-topo div {
+  background-color: var(--escada-color);
+  width: calc(var(--width) / 17.14);
+  height: calc(var(--height) / 7.36);
+  margin-left: calc(var(--width) / 12);
+  flex-direction: row;
+  position: relative;
+  top: calc(var(--height) / 7);
+  box-shadow: inset 0px calc(var(--height) / 18.66) 0 0 #93989b;
+}
+.mangueira {
+  background-color: var(--farol-color);
+  height: calc(var(--height) / 12.72);
+  width: calc(var(--width) / 2.4);
+  position: absolute;
+  top: calc(var(--width) / 12);
+  left: calc(var(--width) / 10);
+}
+.mangueira::before,
+.mangueira::after {
+  content: "";
+  display: block;
+  background-color: var(--cinza-color);
+  height: calc(var(--height) / 5.83);
+  width: calc(var(--width) / 16.21);
+  float: left;
+  border-radius: calc(var(--height) / 56);
+  position: relative;
+  top: calc(var(--height) / -21.53);
+}
+.mangueira::after {
+  float: right;
+}
+
+@keyframes sirene {
+  100% {
+    box-shadow: inset -5px 28px 19px #9a3636;
+  }
+}
+/* prettier-ignore */
+@keyframes pneu {
+  100% {
+    box-shadow: 
+      0 calc(var(--height) / 56) 0 calc(var(--width) / 70) var(--pneu-color),
+      0 calc(var(--height) / 56) 0 calc(var(--width) / 15) #333e48, 
+      11px calc(var(--height) / 8) calc(var(--width) / 30) rgba(0, 0, 0, 0.4),
+      -1px calc(var(--width) / -40) 0px calc(var(--width) / 16.21) #cc4747;
+  }
+}
+
+@keyframes farol {
+  100% {
+    background-color: #ffe5ab;
+  }
+}
+@keyframes moving {
+  100% {
+    transform: translateX(100%);
+  }
+}
+@keyframes escapamento {
+  0% {
+    background-color: rgba(0, 0, 0, 0.5);
+    transform: scale(0.2) translateX(0);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 1);
+    transform: scale(1.2) translateX(-20px);
+  }
+}
+@media (max-width: 370px) {
+  :root {
+    --width: 150px;
+    --height: 70px;
+  }
+}
+@media (min-width: 370px) and (max-width: 800px) {
+  :root {
+    --width: 300px;
+    --height: 140px;
+  }
+}
+
+
 img.frame {
   border-image: url('//s3-us-west-2.amazonaws.com/s.cdpn.io/4273/frame.png') 93 92 87 92 stretch stretch; 
   border-color: #f4be52;
