@@ -57,7 +57,10 @@
                         panY: false,
                         wheelX: "none",
                         wheelY: "none",
-                        paddingLeft: 0
+                        paddingLeft: 0,
+                        accessibility: {
+                            enabled: false
+                        }
                     }));
 
                     // Add cursor
@@ -90,8 +93,8 @@
                         yAxis: yAxis,
                         valueYField: "value",
                         sequencedInterpolation: true,
-                        categoryXField: "name"
-                        
+                        categoryXField: "name",
+                        tooltip: am5.Tooltip.new(root, { dy: -25, labelText: "{valueY}" })
                     }));
                     series.columns.template.setAll({ cornerRadiusTL: 5, cornerRadiusTR: 5, strokeOpacity: 0 });
                     series.columns.template.adapters.add("fill", (fill, target) => chart.get("colors").getIndex(series.columns.indexOf(target)));
