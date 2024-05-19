@@ -453,7 +453,7 @@ async function fetchFireHydrantData() {
                 xaxis: {
                     categories: years,
                     title: {
-                        text: 'Year'
+                        text: 'Manufacture Year'
                     }
                 },
                 yaxis: {
