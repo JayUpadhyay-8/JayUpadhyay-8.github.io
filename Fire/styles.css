@@ -62,7 +62,10 @@ input{
 }
  */
 
-
+#mapDept {
+            width: 100%;
+            height: 500px;
+        }
 body {
 /*             font-family: Arial, sans-serif; */
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
