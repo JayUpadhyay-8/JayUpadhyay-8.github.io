@@ -390,3 +390,82 @@ const sqlDeptQuery = `SELECT * FROM "e4ab410d-5119-4126-8411-8f7700d3c0bf"`;
             .catch(function(error) {
                 console.error('Error fetching data:', error);
             });
+
+
+async function fetchFireHydrantData() {
+            const sqlHydrantQuery = `SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03"`;
+            const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=${encodeURIComponent(sqlHydrantQuery)}`;
+            const response = await axios.get(url);
+            return response.data.result.records;
+        }
+
+        function processHydrantData(records) {
+            const intervalCounts = {};
+            for (let year = 1900; year <= 2024; year += 10) {
+                intervalCounts[year] = 0;
+            }
+
+            records.forEach(record => {
+                const year = parseInt(record.MANUFACTUR);
+                if (!isNaN(year) && year > 0) {
+                    const interval = Math.floor(year / 10) * 10;
+                    if (intervalCounts[interval] !== undefined) {
+                        intervalCounts[interval]++;
+                    }
+                }
+            });
+            return Object.entries(intervalCounts).sort((a, b) => a[0] - b[0]);
+        }
+
+        async function renderChart() {
+            const records = await fetchFireHydrantData();
+            const intervalData = processHydrantData(records);
+            const years = intervalData.map(item => item[0]);
+            const counts = intervalData.map(item => item[1]);
+
+            var options = {
+                series: [{
+                    name: "Fire Hydrants",
+                    data: counts
+                }],
+                chart: {
+                    height: 350,
+                    type: 'line',
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'straight'
+                },
+                title: {
+                    text: 'Number of Fire Hydrants Over 10-Year Intervals',
+                    align: 'left'
+                },
+                grid: {
+                    row: {
+                        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                        opacity: 0.5
+                    },
+                },
+                xaxis: {
+                    categories: years,
+                    title: {
+                        text: 'Year'
+                    }
+                },
+                yaxis: {
+                    title: {
+                        text: 'Number of Fire Hydrants'
+                    }
+                }
+            };
+
+            var chart = new ApexCharts(document.querySelector("#chartHydrant"), options);
+            chart.render();
+        }
+
+        renderChart();
