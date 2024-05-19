@@ -260,22 +260,18 @@ function addMarkers(data) {
 
 document.getElementById('yearSelect').addEventListener('change', function() {
     var year = this.value;
-    if (year === "Unknown") {
-        var sqlQuery = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03" WHERE "MANUFACTUR" IN ('-999', '0', '200', '209')`);
-    } else if (year) {
+    if (year) {
         var sqlQuery = encodeURIComponent(`SELECT * FROM "1479a183-dde0-46a6-a828-f526df010a03" WHERE "MANUFACTUR" LIKE '${year}'`);
+        axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${sqlQuery}`)
+            .then(function(response) {
+                addMarkers(response.data.result.records);
+            })
+            .catch(function(error) {
+                console.error('Error fetching data:', error);
+            });
     } else {
         markers.clearLayers();
-        return;
     }
-
-    axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${sqlQuery}`)
-        .then(function(response) {
-            addMarkers(response.data.result.records);
-        })
-        .catch(function(error) {
-            console.error('Error fetching data:', error);
-        });
 });
 
 // Initially fetch all data to populate year dropdown
@@ -294,14 +290,7 @@ axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${initi
             option.text = year;
             select.appendChild(option);
         });
-
-        // Add "Unknown" option for invalid years
-        var unknownOption = document.createElement('option');
-        unknownOption.value = 'Unknown';
-        unknownOption.text = 'Unknown';
-        select.appendChild(unknownOption);
     })
     .catch(function(error) {
         console.error('Error initializing data:', error);
     });
-
