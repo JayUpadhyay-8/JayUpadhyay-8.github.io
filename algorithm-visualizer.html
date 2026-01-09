@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP Flow Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-1: #0b1026;
+      --bg-2: #1a1f3b;
+      --ink: #f7f2e8;
+      --muted: #b9c0d9;
+      --accent: #ff8a3d;
+      --accent-2: #3de1ff;
+      --panel: rgba(17, 22, 45, 0.72);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --node: rgba(19, 26, 58, 0.9);
+      --node-border: rgba(255, 255, 255, 0.12);
+      --line: rgba(255, 255, 255, 0.2);
+      --line-active: #3de1ff;
+      --pulse: rgba(61, 225, 255, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 400px at 10% -10%, rgba(255, 138, 61, 0.35), transparent 55%),
+        radial-gradient(1200px 500px at 110% 10%, rgba(61, 225, 255, 0.35), transparent 60%),
+        linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 18px;
+    }
+
+    .shell {
+      width: min(1040px, 100%);
+      background: var(--panel);
+      border-radius: 24px;
+      border: 1px solid var(--panel-border);
+      padding: 24px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 60px rgba(6, 10, 24, 0.5);
+      animation: lift 0.8s ease;
+    }
+
+    @keyframes lift {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(20px, 3vw, 30px);
+      margin: 0;
+      letter-spacing: 0.4px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    input[type="text"] {
+      background: rgba(10, 16, 36, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--ink);
+      padding: 10px 14px;
+      border-radius: 999px;
+      min-width: 240px;
+    }
+
+    button {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, border 0.2s ease, background 0.2s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .speed {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    input[type="range"] {
+      accent-color: var(--accent);
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .timeline {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--muted);
+      width: 100%;
+    }
+
+    .timeline input[type="range"] {
+      width: 100%;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 18px;
+    }
+
+    .flow {
+      position: relative;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(8, 12, 28, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      min-height: 360px;
+      overflow: hidden;
+    }
+
+    .flow-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 12px;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .node {
+      background: var(--node);
+      border: 1px solid var(--node-border);
+      border-radius: 16px;
+      padding: 14px 12px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ink);
+      cursor: pointer;
+      position: relative;
+      box-shadow: inset 0 0 0 rgba(255, 255, 255, 0);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .node small {
+      display: block;
+      font-weight: 400;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+
+    .chip {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--muted);
+    }
+
+    .node.active {
+      transform: translateY(-4px);
+      box-shadow: 0 0 18px rgba(61, 225, 255, 0.35);
+    }
+
+    .node::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border-radius: 18px;
+      border: 1px solid transparent;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .node.active::after {
+      border-color: var(--pulse);
+      opacity: 1;
+    }
+
+    .node-client { grid-column: 1 / 2; grid-row: 2 / 3; }
+    .node-agent { grid-column: 2 / 3; grid-row: 2 / 3; }
+    .node-mcp { grid-column: 3 / 4; grid-row: 2 / 3; }
+    .node-data { grid-column: 3 / 4; grid-row: 1 / 2; }
+    .node-tools { grid-column: 3 / 4; grid-row: 3 / 4; }
+
+    .lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .lines line {
+      stroke: var(--line);
+      stroke-width: 2;
+      stroke-linecap: round;
+    }
+
+    .lines line.active {
+      stroke: var(--line-active);
+      filter: drop-shadow(0 0 6px rgba(61, 225, 255, 0.7));
+    }
+
+    .packet {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent-2);
+      box-shadow: 0 0 10px rgba(61, 225, 255, 0.8);
+      z-index: 2;
+      left: 0;
+      top: 0;
+      transform: translate(-999px, -999px);
+      transition: transform 0.4s ease;
+    }
+
+    .panel {
+      background: rgba(10, 14, 32, 0.7);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .log {
+      background: rgba(6, 10, 24, 0.7);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      height: 160px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .connectors {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .connector-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .connector-title {
+      font-weight: 600;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .connector-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .log strong {
+      color: var(--ink);
+    }
+
+    .status {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        order: 2;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <h1>MCP Data Flow Visualizer</h1>
+        <div class="subtitle">Explore how an AI client talks to an agent, MCP server, and tools.</div>
+      </div>
+      <div class="controls">
+        <input id="prompt" type="text" value="Summarize policy changes for Q4" aria-label="Client prompt">
+        <label class="toggle">
+          <input id="toolToggle" type="checkbox" checked>
+          Include tool call
+        </label>
+        <button id="play">Play</button>
+        <button id="step">Step</button>
+        <button id="reset">Reset</button>
+        <div class="speed">
+          <span>Speed</span>
+          <input id="speed" type="range" min="120" max="900" value="420">
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <div class="flow" id="flow">
+        <svg class="lines" id="lines" aria-hidden="true">
+          <line id="line-client-agent"></line>
+          <line id="line-agent-mcp"></line>
+          <line id="line-mcp-data"></line>
+          <line id="line-mcp-tools"></line>
+        </svg>
+        <div class="flow-grid">
+          <button class="node node-client" id="node-client" aria-label="AI client node">
+            AI Client
+            <small>User prompt + context</small>
+          </button>
+          <button class="node node-agent" id="node-agent" aria-label="Agent node">
+            Agent
+            <small>Plans and decides tools</small>
+          </button>
+          <button class="node node-mcp" id="node-mcp" aria-label="MCP server node">
+            MCP Server
+            <small>Resource registry + auth</small>
+          </button>
+          <button class="node node-data" id="node-data" aria-label="Data source node">
+            Data Sources
+            <small>DB, docs, vector store</small>
+            <span class="chip-group" id="data-chips"></span>
+          </button>
+          <button class="node node-tools" id="node-tools" aria-label="Tools node">
+            Tooling
+            <small>APIs and actions</small>
+            <span class="chip-group" id="tool-chips"></span>
+          </button>
+        </div>
+        <div class="packet" id="packet" aria-hidden="true"></div>
+      </div>
+
+      <aside class="panel">
+        <div>
+          <h2>Flow status</h2>
+          <p id="detail">Click a node to read what it does in the MCP pipeline.</p>
+        </div>
+        <div class="timeline">
+          <span>Timeline</span>
+          <input id="timeline" type="range" min="0" max="0" value="0" aria-label="Timeline scrubber">
+        </div>
+        <div class="status">
+          <span>Step <strong id="stepCount">0</strong></span>
+          <span>Total <strong id="stepTotal">0</strong></span>
+        </div>
+        <div class="connectors">
+          <div class="connector-group">
+            <span class="connector-title">Data connectors</span>
+            <label><input type="checkbox" data-connector="Salesforce" data-type="data" checked>Salesforce</label>
+            <label><input type="checkbox" data-connector="Database" data-type="data" checked>Database</label>
+            <label><input type="checkbox" data-connector="S3" data-type="data" checked>S3</label>
+            <label><input type="checkbox" data-connector="Vector DB" data-type="data" checked>Vector DB</label>
+          </div>
+          <div class="connector-group">
+            <span class="connector-title">Tool connectors</span>
+            <label><input type="checkbox" data-connector="AWS Bedrock" data-type="tool" checked>AWS Bedrock</label>
+            <label><input type="checkbox" data-connector="Slack" data-type="tool" checked>Slack</label>
+            <label><input type="checkbox" data-connector="Jira" data-type="tool" checked>Jira</label>
+            <label><input type="checkbox" data-connector="Webhook" data-type="tool" checked>Webhook</label>
+          </div>
+        </div>
+        <div class="log" id="log"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const flow = document.getElementById("flow");
+    const packet = document.getElementById("packet");
+    const promptInput = document.getElementById("prompt");
+    const toolToggle = document.getElementById("toolToggle");
+    const playBtn = document.getElementById("play");
+    const stepBtn = document.getElementById("step");
+    const resetBtn = document.getElementById("reset");
+    const speedInput = document.getElementById("speed");
+    const timelineInput = document.getElementById("timeline");
+    const logEl = document.getElementById("log");
+    const detailEl = document.getElementById("detail");
+    const stepCountEl = document.getElementById("stepCount");
+    const stepTotalEl = document.getElementById("stepTotal");
+    const dataChipsEl = document.getElementById("data-chips");
+    const toolChipsEl = document.getElementById("tool-chips");
+    const connectorInputs = Array.from(document.querySelectorAll("[data-connector]"));
+
+    const nodes = {
+      client: document.getElementById("node-client"),
+      agent: document.getElementById("node-agent"),
+      mcp: document.getElementById("node-mcp"),
+      data: document.getElementById("node-data"),
+      tools: document.getElementById("node-tools")
+    };
+
+    const lines = {
+      "client-agent": document.getElementById("line-client-agent"),
+      "agent-mcp": document.getElementById("line-agent-mcp"),
+      "mcp-data": document.getElementById("line-mcp-data"),
+      "mcp-tools": document.getElementById("line-mcp-tools")
+    };
+
+    const nodeDetails = {
+      client: "Collects the user prompt, local context, and UI state before sending to the agent.",
+      agent: "Plans the next action, selects MCP resources, and orchestrates tool calls.",
+      mcp: "Authenticates, routes requests to connectors, and normalizes responses.",
+      data: "Holds structured data, documents, and vector indexes accessed via MCP.",
+      tools: "Executes external actions like APIs, workflows, or automation jobs."
+    };
+
+    let steps = [];
+    let stepIndex = 0;
+    let playing = false;
+    let playToken = 0;
+
+    function getDelay() {
+      return Number(speedInput.value);
+    }
+
+    function updateStepInfo() {
+      stepCountEl.textContent = stepIndex;
+      stepTotalEl.textContent = steps.length;
+    }
+
+    function log(message) {
+      const entry = document.createElement("div");
+      entry.innerHTML = message;
+      logEl.appendChild(entry);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function clearLog() {
+      logEl.innerHTML = "";
+    }
+
+    function highlightNodes(list) {
+      Object.values(nodes).forEach((node) => node.classList.remove("active"));
+      list.forEach((key) => nodes[key].classList.add("active"));
+    }
+
+    function highlightLine(from, to) {
+      Object.values(lines).forEach((line) => line.classList.remove("active"));
+      const direct = `${from}-${to}`;
+      const reverse = `${to}-${from}`;
+      const line = lines[direct] || lines[reverse];
+      if (line) {
+        line.classList.add("active");
+      }
+    }
+
+    function renderChips(target, items, emptyLabel) {
+      target.innerHTML = "";
+      if (!items.length) {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = emptyLabel;
+        target.appendChild(chip);
+        return;
+      }
+      items.forEach((item) => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = item;
+        target.appendChild(chip);
+      });
+    }
+
+    function getSelectedConnectors(type) {
+      return connectorInputs
+        .filter((input) => input.dataset.type === type && input.checked)
+        .map((input) => input.dataset.connector);
+    }
+
+    function centerOf(el) {
+      const rect = el.getBoundingClientRect();
+      const parent = flow.getBoundingClientRect();
+      return {
+        x: rect.left - parent.left + rect.width / 2,
+        y: rect.top - parent.top + rect.height / 2
+      };
+    }
+
+    function movePacket(from, to) {
+      const start = centerOf(nodes[from]);
+      const end = centerOf(nodes[to]);
+      const size = 12;
+      packet.style.transition = "none";
+      packet.style.transform = `translate(${start.x - size / 2}px, ${start.y - size / 2}px)`;
+      requestAnimationFrame(() => {
+        packet.style.transition = `transform ${getDelay()}ms ease`;
+        packet.style.transform = `translate(${end.x - size / 2}px, ${end.y - size / 2}px)`;
+      });
+    }
+
+    function movePacketInstant(from, to) {
+      const end = centerOf(nodes[to]);
+      const size = 12;
+      packet.style.transition = "none";
+      packet.style.transform = `translate(${end.x - size / 2}px, ${end.y - size / 2}px)`;
+    }
+
+    function buildSteps() {
+      const prompt = promptInput.value.trim() || "User prompt";
+      const includeTool = toolToggle.checked;
+      const dataConnectors = getSelectedConnectors("data");
+      const toolConnectors = getSelectedConnectors("tool");
+      const toolList = toolConnectors.length ? toolConnectors : ["Generic Tool"];
+
+      renderChips(dataChipsEl, dataConnectors, "No data connectors");
+      renderChips(toolChipsEl, toolConnectors, "No tool connectors");
+
+      const dataSummary = dataConnectors.length ? dataConnectors.join(", ") : "no data connectors";
+      const toolSummary = includeTool ? toolList.join(", ") : "no tool calls";
+
+      steps = [
+        {
+          type: "move",
+          from: "client",
+          to: "agent",
+          log: `<strong>Client</strong> sends prompt: "${prompt}"`
+        },
+        {
+          type: "focus",
+          node: "agent",
+          log: `<strong>Agent</strong> selects connectors (data: ${dataSummary}; tools: ${toolSummary}).`
+        },
+        {
+          type: "move",
+          from: "agent",
+          to: "mcp",
+          log: "<strong>Agent</strong> requests context from MCP server."
+        },
+        {
+          type: "move",
+          from: "mcp",
+          to: "data",
+          log: "<strong>MCP</strong> fetches data from sources."
+        }
+      ];
+
+      dataConnectors.forEach((connector) => {
+        steps.push({
+          type: "focus",
+          node: "data",
+          line: ["mcp", "data"],
+          log: `<strong>Connector</strong> ${connector} returns context to MCP.`
+        });
+      });
+
+      steps.push({
+        type: "move",
+        from: "data",
+        to: "mcp",
+        log: "<strong>Data</strong> returns records and embeddings."
+      });
+
+      if (includeTool) {
+        steps.push({
+          type: "move",
+          from: "mcp",
+          to: "tools",
+          log: "<strong>MCP</strong> invokes a tool for workflow automation."
+        });
+
+        toolList.forEach((connector) => {
+          steps.push({
+            type: "focus",
+            node: "tools",
+            line: ["mcp", "tools"],
+            log: `<strong>Tool</strong> ${connector} executes with MCP payload.`
+          });
+        });
+
+        steps.push({
+          type: "move",
+          from: "tools",
+          to: "mcp",
+          log: "<strong>Tool</strong> returns output and status."
+        });
+      }
+
+      steps.push(
+        {
+          type: "move",
+          from: "mcp",
+          to: "agent",
+          log: "<strong>MCP</strong> delivers normalized context."
+        },
+        {
+          type: "move",
+          from: "agent",
+          to: "client",
+          log: "<strong>Agent</strong> responds with final answer."
+        }
+      );
+
+      stepTotalEl.textContent = steps.length;
+      timelineInput.max = steps.length;
+      timelineInput.value = stepIndex;
+    }
+
+    function applyStep(step, withLog = true) {
+      if (!step) return;
+      if (step.type === "move") {
+        highlightNodes([step.from, step.to]);
+        highlightLine(step.from, step.to);
+        movePacketInstant(step.from, step.to);
+      } else if (step.type === "focus") {
+        highlightNodes([step.node]);
+        if (step.line) {
+          highlightLine(step.line[0], step.line[1]);
+        } else {
+          Object.values(lines).forEach((line) => line.classList.remove("active"));
+        }
+      }
+      if (withLog) {
+        log(step.log);
+      }
+    }
+
+    async function runStep(step) {
+      if (!step) return;
+      if (step.type === "move") {
+        highlightNodes([step.from, step.to]);
+        highlightLine(step.from, step.to);
+        movePacket(step.from, step.to);
+        log(step.log);
+        await new Promise((resolve) => setTimeout(resolve, getDelay()));
+      } else if (step.type === "focus") {
+        highlightNodes([step.node]);
+        if (step.line) {
+          highlightLine(step.line[0], step.line[1]);
+        } else {
+          Object.values(lines).forEach((line) => line.classList.remove("active"));
+        }
+        log(step.log);
+        await new Promise((resolve) => setTimeout(resolve, getDelay()));
+      }
+    }
+
+    async function play() {
+      if (playing) return;
+      playing = true;
+      const token = ++playToken;
+      setControls(true);
+      while (stepIndex < steps.length && token === playToken) {
+        updateStepInfo();
+        await runStep(steps[stepIndex]);
+        stepIndex += 1;
+        timelineInput.value = stepIndex;
+      }
+      setControls(false);
+      playing = false;
+      updateStepInfo();
+    }
+
+    function setControls(isRunning) {
+      playBtn.disabled = isRunning;
+      stepBtn.disabled = isRunning;
+      resetBtn.disabled = isRunning;
+      promptInput.disabled = isRunning;
+      toolToggle.disabled = isRunning;
+      timelineInput.disabled = isRunning;
+    }
+
+    async function stepOnce() {
+      if (playing) return;
+      if (stepIndex >= steps.length) return;
+      setControls(true);
+      updateStepInfo();
+      await runStep(steps[stepIndex]);
+      stepIndex += 1;
+      timelineInput.value = stepIndex;
+      updateStepInfo();
+      setControls(false);
+    }
+
+    function reset() {
+      playToken += 1;
+      playing = false;
+      stepIndex = 0;
+      buildSteps();
+      updateStepInfo();
+      timelineInput.value = 0;
+      clearLog();
+      highlightNodes([]);
+      Object.values(lines).forEach((line) => line.classList.remove("active"));
+      packet.style.transform = "translate(-999px, -999px)";
+      setControls(false);
+    }
+
+    function scrubTo(value) {
+      stepIndex = value;
+      updateStepInfo();
+      clearLog();
+      highlightNodes([]);
+      Object.values(lines).forEach((line) => line.classList.remove("active"));
+      packet.style.transform = "translate(-999px, -999px)";
+      for (let i = 0; i < stepIndex; i += 1) {
+        applyStep(steps[i], true);
+      }
+    }
+
+    function updateLines() {
+      const pairs = [
+        ["client", "agent", "client-agent"],
+        ["agent", "mcp", "agent-mcp"],
+        ["mcp", "data", "mcp-data"],
+        ["mcp", "tools", "mcp-tools"]
+      ];
+      pairs.forEach(([from, to, id]) => {
+        const start = centerOf(nodes[from]);
+        const end = centerOf(nodes[to]);
+        const line = lines[id];
+        line.setAttribute("x1", start.x);
+        line.setAttribute("y1", start.y);
+        line.setAttribute("x2", end.x);
+        line.setAttribute("y2", end.y);
+      });
+    }
+
+    Object.entries(nodes).forEach(([key, node]) => {
+      node.addEventListener("click", () => {
+        detailEl.textContent = nodeDetails[key];
+      });
+    });
+
+    playBtn.addEventListener("click", play);
+    stepBtn.addEventListener("click", stepOnce);
+    resetBtn.addEventListener("click", reset);
+    toolToggle.addEventListener("change", reset);
+    promptInput.addEventListener("change", reset);
+    connectorInputs.forEach((input) => input.addEventListener("change", reset));
+    timelineInput.addEventListener("input", (event) => {
+      if (playing) return;
+      scrubTo(Number(event.target.value));
+    });
+    window.addEventListener("resize", updateLines);
+
+    buildSteps();
+    updateStepInfo();
+    updateLines();
+  </script>
+</body>
+</html>
