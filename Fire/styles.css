@@ -1,14 +1,14 @@
 
 img.frame {
-  border-image: url('//s3-us-west-2.amazonaws.com/s.cdpn.io/4273/frame.png') 93 92 87 92 stretch stretch; 
-  border-color: #f4be52;
-  border-style: inset;
-  border-width: 60px;
+  border: 14px solid #ffffff;
+  border-radius: 24px;
   display: block;
-  width: 40%;
+  width: 60%;
+  max-width: 760px;
   height: auto;
-  background-color: #ffe;
+  background-color: #ffffff;
   margin: 0 auto;
+  box-shadow: 0 22px 40px rgba(24, 30, 44, 0.2);
 }
 @media all and (max-width: 500px) {
   img.frame { 
@@ -20,121 +20,219 @@ img.frame {
 
 #mapDept {
             width: 100%;
-            height: 500px;
+            height: 520px;
         }
 #chartHydrant {
             width: 100%;
             height: 350px;
         }
 body {
+  margin: 0;
+  font-family: "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: radial-gradient(900px 500px at 15% -10%, rgba(255, 200, 128, 0.25), transparent 60%),
+    radial-gradient(900px 500px at 90% 0%, rgba(246, 222, 150, 0.2), transparent 60%),
+    linear-gradient(160deg, #f7f3ea 0%, #f1ede3 60%, #f7f3ea 100%);
+  color: #1f2737;
+}
 
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        }
+body.bg-gray-100 {
+  background: radial-gradient(900px 500px at 15% -10%, rgba(255, 200, 128, 0.25), transparent 60%),
+    radial-gradient(900px 500px at 90% 0%, rgba(246, 222, 150, 0.2), transparent 60%),
+    linear-gradient(160deg, #f7f3ea 0%, #f1ede3 60%, #f7f3ea 100%);
+}
 
             h1 {
-                text-align: center;
-                font-size: 2.5em;
-                margin-bottom: 0.5em;
+              text-align: center;
+              font-family: "Fraunces", serif;
+              font-size: clamp(2.4rem, 4vw, 3.4rem);
+              margin-bottom: 0.5em;
             }
-    
+
             h2 {
-                text-align: center;
-                font-size: 2em;
-                margin-top: 1em;
+              text-align: center;
+              font-size: clamp(1.6rem, 3vw, 2.4rem);
+              margin-top: 1em;
             }
-    
+
             p {
-                font-size: 1.2em;
-                margin-bottom: 0.5em;
-                margin-top: 0.5em;
+              font-size: 1.05rem;
+              line-height: 1.7;
+              margin-bottom: 0.6em;
+              margin-top: 0.6em;
+              color: #3d475a;
             }
         .chart-container {
-            height: 800px;
+            height: 520px;
+            margin-top: 20px;
+            background: #f3f5f9;
+            border-radius: 18px;
+            padding: 16px;
+            border: 1px solid rgba(31, 39, 55, 0.08);
+            box-shadow: 0 12px 24px rgba(20, 26, 40, 0.08);
         }
-        #toggleChartType, #toggleTop10 {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
+        #chartDept, #chartHydrant {
+            background: #f3f5f9;
+            border-radius: 18px;
+            padding: 12px;
+            border: 1px solid rgba(31, 39, 55, 0.08);
+            box-shadow: 0 12px 24px rgba(20, 26, 40, 0.08);
+        }
+        .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+            background: transparent;
+            border-radius: 16px;
+        }
+        #toggleChartType, #toggleTop10, #quiz-section button, #toggleChartType:focus, #toggleTop10:focus {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 12px auto;
+            padding: 10px 18px;
+            background: linear-gradient(120deg, #ffb65d 0%, #f7d26a 100%);
+            color: #1c1a12;
             border: none;
-            border-radius: 5px;
+            border-radius: 999px;
             cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 10px 20px rgba(255, 182, 93, 0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        #toggleChartType:hover, #toggleTop10:hover {
-            background-color: #0056b3;
+        #toggleChartType:hover, #toggleTop10:hover, #quiz-section button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 26px rgba(255, 182, 93, 0.35);
         }
         #quiz-section {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 720px;
+            margin: 24px auto;
+            padding: 24px;
+            border: 1px solid rgba(31, 39, 55, 0.12);
+            border-radius: 20px;
+            box-shadow: 0 18px 28px rgba(20, 26, 40, 0.12);
+            background: #f7f6f1;
+            color: #1f2737;
         }
         #quiz-section h2 {
             text-align: center;
         }
         #quiz p {
-            font-size: 1.3em;
+            font-size: 1.05rem;
+        }
+
+        .quiz-question {
+            border-radius: 16px;
+            padding: 16px;
+            background: #ffffff;
+            border: 1px solid rgba(31, 39, 55, 0.08);
+            box-shadow: 0 10px 20px rgba(20, 26, 40, 0.08);
+            margin-bottom: 16px;
+        }
+
+        .quiz-question label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            color: #1f2737;
         }
 
         #quiz input[type="radio"] {
             margin-right: 10px;
         }
         #quiz button {
-            display: block;
-            margin: 20px auto;
-            padding: 15px 40px;
-            background: linear-gradient(90deg, rgba(0,123,255,1) 0%, rgba(0,89,183,1) 100%);
-            color: #fff;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.5em;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-            transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
-        }
-        
-        #quiz button:hover {
-            background: linear-gradient(90deg, rgba(0,89,183,1) 0%, rgba(0,123,255,1) 100%);
-            box-shadow: 0 12px 16px rgba(0, 0, 0, 0.3);
-            transform: translateY(-2px);
+            padding: 12px 28px;
+            font-size: 1rem;
         }
         #topIncident {
             text-align: center;
-            font-size: 1.5em;
-            margin-top: 20px;
-            color: #d9534f;
+            font-size: 1.1rem;
+            margin-top: 18px;
+            color: #b42318;
         }
 
 #quiz-result {
             text-align: center;
-            font-size: 1.5em;
-            margin-top: 20px;
+            font-size: 1.2rem;
+            margin-top: 14px;
         }
 
-.header, .footer {
-            background-color: #111;
+.header {
+            background: linear-gradient(120deg, #1b2134 0%, #2a3146 100%);
             color: #fff;
-            padding: 20px;
+            padding: 30px 20px;
             text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .footer {
+            background: linear-gradient(140deg, #1f2433 0%, #2b3246 100%);
+            color: #f8fafc;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .footer p {
+            color: #e9eef7;
         }
         .header-image {
-            width: 100px;
+            width: 90px;
             margin: 0 auto;
             display: block;
         }
+
+        .glass-text {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #f8fafc;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            text-shadow: none;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
         .section {
             padding: 40px 20px;
+            margin: 28px auto;
+            max-width: 1100px;
+            border-radius: 26px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            background: #ffffff;
+            box-shadow: 0 24px 40px rgba(20, 26, 40, 0.12);
         }
-        #mapid, #choroplethMap, #map {
-            height: 500px;
+        .section.bg-white {
+            background: #ffffff;
+        }
+        #mapid, #choroplethMap, #map, #incidentMap {
+            height: 520px;
             margin-top: 20px;
+            border-radius: 18px;
+            overflow: hidden;
         }
         #mapid, #mapHydrant {
-            height: 600px;
+            height: 520px;
+        }
+
+        .leaflet-container img,
+        .leaflet-container .leaflet-marker-icon,
+        .leaflet-container .leaflet-marker-shadow {
+            max-width: none !important;
+        }
+
+        .center-note {
+            text-align: center;
+            margin-top: 20px;
+            color: #3d475a;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: center;
         }
       :root {
             --glitter: url("https://assets.codepen.io/13471/silver-glitter-background.png");
@@ -192,8 +290,8 @@ body {
         .header {
             position: relative;
             z-index: 2;
-            color: #fff; 
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
         }
 
 

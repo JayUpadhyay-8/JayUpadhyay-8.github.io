@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boston Fire Safety Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.2/dist/tailwind.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
@@ -25,7 +28,7 @@
     <header class="header fire">
             <h1><img src="logo.png" class="header-image center" alt="Boston Fire Department Logo"></h1>
         <h1 class="text-3xl font-bold">Boston Fires</h1>
-        <p>Educating for Safety, Preparing for Action</p>
+        <p class="glass-text">Educating for Safety, Preparing for Action</p>
     </header>
 
     <section class="section bg-white">
@@ -47,14 +50,23 @@
         <div class="chart-container">
             <canvas id="incidentTypeChart"></canvas>
         </div>
-        <p style="text-align: center;" >You can change the chart type to line.</p><button id="toggleChartType">Toggle Chart Type</button>
-        <p style="text-align: center;" >Want to know the TOP 10 reason reported? </p><button id="toggleTop10">Show Top 10 Incidents</button>
+        <p class="center-note">You can change the chart type to line.</p>
+        <div class="button-row">
+            <button id="toggleChartType">Toggle Chart Type</button>
+        </div>
+        <p class="center-note">Want to know the top 10 reasons reported?</p>
+        <div class="button-row">
+            <button id="toggleTop10">Show Top 10 Incidents</button>
+        </div>
         <div id="topIncident"></div>
 
         <h2 class="text-2xl">Now, by examining the data, a question arises: Which neighborhood has reported the most incidents? To find this out, let's take a closer look with a pie chart.</h2>
-        <div>
-            <canvas id="neighborhoodPieChart" style="width: 700px; height: 700px; display: flex; justify-content: center; margin: 20px auto;"></canvas>
+        <div class="chart-container">
+            <canvas id="neighborhoodPieChart"></canvas>
         </div>
+        <h2 class="text-2xl">Incident Map: where fires are reported today</h2>
+        <p>The map highlights recent fire incidents across Boston. Zoom in to explore clusters and hotspots.</p>
+        <div id="incidentMap"></div>
     
     </section>
     

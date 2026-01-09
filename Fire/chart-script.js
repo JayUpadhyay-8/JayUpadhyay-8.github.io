@@ -1,3 +1,18 @@
+const theme = {
+    text: '#1f2737',
+    muted: '#5b6b84',
+    grid: 'rgba(31, 39, 55, 0.14)',
+    accent: '#ffb65d',
+    accentSoft: 'rgba(255, 182, 93, 0.35)',
+    palette: ['#ffb65d', '#f7d26a', '#35c7b8', '#8cd96a', '#4f8cff', '#f47c7c', '#9f7aea']
+};
+
+if (window.Chart) {
+    Chart.defaults.color = theme.text;
+    Chart.defaults.font.family = '"Space Grotesk", sans-serif';
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+}
+
 // Function to fetch data
 async function fetchData(sqlQuery) {
     const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=${encodeURIComponent(sqlQuery)}`;
@@ -22,6 +37,31 @@ function processData(records, key, map = null) {
     return counts;
 }
 
+function getIncidentCoordinates(record) {
+    const latFields = ['latitude', 'Latitude', 'LATITUDE', 'lat', 'Y'];
+    const lonFields = ['longitude', 'Longitude', 'LONGITUDE', 'lon', 'lng', 'X'];
+    let lat = null;
+    let lon = null;
+
+    latFields.forEach(field => {
+        if (lat === null && record[field] !== undefined && record[field] !== null) {
+            lat = parseFloat(record[field]);
+        }
+    });
+
+    lonFields.forEach(field => {
+        if (lon === null && record[field] !== undefined && record[field] !== null) {
+            lon = parseFloat(record[field]);
+        }
+    });
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+        return null;
+    }
+
+    return { lat, lon };
+}
+
 
 // Function to create a pie chart
 function createPieChart(ctx, title, labels, data) {
@@ -32,24 +72,29 @@ function createPieChart(ctx, title, labels, data) {
             datasets: [{
                 label: title,
                 data: data,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
+                backgroundColor: theme.palette,
+                borderColor: 'rgba(15, 20, 32, 0.6)',
+                borderWidth: 2
             }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: theme.text
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 20, 32, 0.9)',
+                    titleColor: '#ffffff',
+                    bodyColor: '#dbe2f5',
+                    borderColor: theme.grid,
+                    borderWidth: 1
+                }
+            }
         }
     });
 }
@@ -57,18 +102,26 @@ function createPieChart(ctx, title, labels, data) {
 
 // Function to create a chart with a logarithmic scale
 function createLogScaleChart(ctx, type, title, labels, data) {
-    
+    const dataset = {
+        label: title,
+        data: data,
+        backgroundColor: theme.accentSoft,
+        borderColor: theme.accent,
+        borderWidth: 2
+    };
+
+    if (type === 'line') {
+        dataset.tension = 0.35;
+        dataset.fill = true;
+    } else {
+        dataset.borderRadius = 6;
+    }
+
     return new Chart(ctx, {
         type: type,
         data: {
             labels: labels,
-            datasets: [{
-                label: title,
-                data: data,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
+            datasets: [dataset]
         },
         options: {
             responsive: true,
@@ -77,24 +130,46 @@ function createLogScaleChart(ctx, type, title, labels, data) {
                 y: {
                     type: 'logarithmic',
                     beginAtZero: true,
+                    grid: {
+                        color: theme.grid
+                    },
+                    ticks: {
+                        color: theme.muted
+                    },
                     title: {
                         display: true,
-                        text: 'Logarithmic Scale'
+                        text: 'Incident Volume (log scale)',
+                        color: theme.muted
                     }
                 },
                 x: {
                     beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.04)'
+                    },
                     ticks: {
-                        maxRotation: 90,
-                        minRotation: 45
+                        maxRotation: 45,
+                        minRotation: 20,
+                        color: theme.muted
                     }
                 }
             },
             plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        color: theme.text
+                    }
+                },
                 tooltip: {
                     enabled: true,
                     mode: 'index',
-                    intersect: false
+                    intersect: false,
+                    backgroundColor: 'rgba(15, 20, 32, 0.9)',
+                    titleColor: '#ffffff',
+                    bodyColor: '#dbe2f5',
+                    borderColor: theme.grid,
+                    borderWidth: 1
                 }
             }
         }
@@ -104,29 +179,76 @@ function createLogScaleChart(ctx, type, title, labels, data) {
 // Function to setup the quiz
 function setupQuiz() {
     const quiz = document.getElementById('quiz');
-    quiz.innerHTML = `
-        <p>What should you do if your clothes catch fire? 🔥</p>
-        <input type="radio" id="stop" name="fire" value="stop"><label for="stop">Stop, Drop, and Roll</label><br>
-        <input type="radio" id="run" name="fire" value="run"><label for="run">Run</label><br>
-        <p>Where should you aim a fire extinguisher? 🧯</p>
-        <input type="radio" id="base" name="extinguisher" value="base"><label for="base">At the base of the fire</label><br>
-        <input type="radio" id="top" name="extinguisher" value="top"><label for="top">At the top of the flames</label><br>
-        <p>What is the emergency number for fire services? ☎️</p>
-        <input type="radio" id="911" name="number" value="911"><label for="911">911</label><br>
-        <input type="radio" id="112" name="number" value="112"><label for="112">112</label><br>
-        <p>What should you do if you see smoke while escaping a fire? 🚪</p>
-        <input type="radio" id="crawl" name="smoke" value="crawl"><label for="crawl">Crawl on the floor</label><br>
-        <input type="radio" id="stand" name="smoke" value="stand"><label for="stand">Stand up and run</label><br>
-        <p>How often should you check your smoke alarms? 🕒</p>
-        <input type="radio" id="monthly" name="alarms" value="monthly"><label for="monthly">Monthly</label><br>
-        <input type="radio" id="yearly" name="alarms" value="yearly"><label for="yearly">Yearly</label><br>
-        <p>What is the first thing you should do when you hear a fire alarm in a building? 🔊</p>
-        <input type="radio" id="evacuate" name="alarm" value="evacuate"><label for="evacuate">Evacuate immediately</label><br>
-        <input type="radio" id="investigate" name="alarm" value="investigate"><label for="investigate">Investigate the source of the alarm</label><br>
-        <p>What should you do if you are trapped in a burning building? 🏢</p>
-        <input type="radio" id="signal" name="trapped" value="signal"><label for="signal">Signal for help at a window</label><br>
-        <input type="radio" id="hide" name="trapped" value="hide"><label for="hide">Hide in a corner</label><br>
-    `;
+    const questions = [
+        {
+            name: 'fire',
+            prompt: 'If your clothes catch fire, what is the safest response?',
+            options: [
+                { value: 'stop', label: 'Stop, drop, and roll' },
+                { value: 'run', label: 'Run outside' }
+            ]
+        },
+        {
+            name: 'extinguisher',
+            prompt: 'Where should you aim a fire extinguisher?',
+            options: [
+                { value: 'base', label: 'At the base of the fire' },
+                { value: 'top', label: 'At the top of the flames' }
+            ]
+        },
+        {
+            name: 'pass',
+            prompt: 'What does PASS stand for?',
+            options: [
+                { value: 'pull', label: 'Pull, Aim, Squeeze, Sweep' },
+                { value: 'push', label: 'Push, Aim, Spray, Stop' }
+            ]
+        },
+        {
+            name: 'smoke',
+            prompt: 'How should you move through a smoky room?',
+            options: [
+                { value: 'crawl', label: 'Stay low and crawl' },
+                { value: 'stand', label: 'Stand and run' }
+            ]
+        },
+        {
+            name: 'alarms',
+            prompt: 'How often should you test smoke alarms?',
+            options: [
+                { value: 'monthly', label: 'Every month' },
+                { value: 'yearly', label: 'Once a year' }
+            ]
+        },
+        {
+            name: 'alarm',
+            prompt: 'When you hear a fire alarm, what should you do first?',
+            options: [
+                { value: 'evacuate', label: 'Evacuate immediately' },
+                { value: 'investigate', label: 'Investigate the source' }
+            ]
+        },
+        {
+            name: 'trapped',
+            prompt: 'If you are trapped in a burning building, what is best?',
+            options: [
+                { value: 'signal', label: 'Signal for help at a window' },
+                { value: 'hide', label: 'Hide in a corner' }
+            ]
+        }
+    ];
+
+    quiz.innerHTML = questions.map((question, index) => `
+        <div class="quiz-question">
+            <p>${index + 1}. ${question.prompt}</p>
+            ${question.options.map((option) => `
+                <label>
+                    <input type="radio" name="${question.name}" value="${option.value}">
+                    ${option.label}
+                </label>
+            `).join('')}
+        </div>
+    `).join('');
 }
 
 // Function to submit the quiz
@@ -134,13 +256,13 @@ function submitQuiz() {
     const correctAnswers = {
         fire: 'stop',
         extinguisher: 'base',
-        number: '911',
+        pass: 'pull',
         smoke: 'crawl',
         alarms: 'monthly',
         alarm: 'evacuate',
         trapped: 'signal'
     };
-    
+
     let score = 0;
     let total = 7;
     let answered = false;
@@ -230,7 +352,34 @@ async function renderCharts() {
     const neighborhoodCtx = document.getElementById('neighborhoodPieChart').getContext('2d');
     createPieChart(neighborhoodCtx, 'Incidents by Neighborhood', Object.keys(neighborhoodCounts), Object.values(neighborhoodCounts));
 
-   
+    // Incident Map
+    const incidentMap = L.map('incidentMap').setView([42.3601, -71.0589], 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+        maxZoom: 18
+    }).addTo(incidentMap);
+    setTimeout(() => incidentMap.invalidateSize(), 300);
+
+    const incidentMarkers = L.markerClusterGroup();
+    incidentMap.addLayer(incidentMarkers);
+
+    incidentRecords.slice(0, 400).forEach(record => {
+        const coords = getIncidentCoordinates(record);
+        if (!coords) {
+            return;
+        }
+        const marker = L.circleMarker([coords.lat, coords.lon], {
+            radius: 4,
+            color: theme.accent,
+            fillColor: theme.accent,
+            fillOpacity: 0.7
+        }).bindPopup(
+            `<strong>${record.incident_description || 'Fire incident'}</strong><br>` +
+            `Neighborhood: ${record.neighborhood || 'Unknown'}<br>` +
+            `Date: ${record.alarm_date || 'N/A'}`
+        );
+        incidentMarkers.addLayer(marker);
+    });
 
     setupQuiz();
 }
@@ -238,23 +387,24 @@ async function renderCharts() {
 renderCharts();
 
 
-var map = L.map('mapHydrant').setView([42.3601, -71.0589], 12);
+const hydrantMap = L.map('mapHydrant').setView([42.3601, -71.0589], 12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
     maxZoom: 18,
-}).addTo(map);
+}).addTo(hydrantMap);
+setTimeout(() => hydrantMap.invalidateSize(), 300);
 
-var markers = L.layerGroup().addTo(map);
+const hydrantMarkers = L.layerGroup().addTo(hydrantMap);
 
 function addMarkers(data) {
-    markers.clearLayers();
+    hydrantMarkers.clearLayers();
     data.forEach(function(hydrant) {
         var marker = L.marker([hydrant.Y, hydrant.X]).bindPopup(
             'Hydrant ID: ' + hydrant._id + '<br>' +
             'Address: ' + hydrant.ADDRESS_NU + ' ' + hydrant.STREET_FEA + '<br>' +
             'Owner Code: ' + hydrant.OWNER_CODE
         );
-        markers.addLayer(marker);
+        hydrantMarkers.addLayer(marker);
     });
 }
 
@@ -297,99 +447,124 @@ axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${initi
 
 
 const sqlDeptQuery = `SELECT * FROM "e4ab410d-5119-4126-8411-8f7700d3c0bf"`;
+const deptMap = L.map('mapDept').setView([42.3601, -71.0589], 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+    maxZoom: 18,
+}).addTo(deptMap);
+setTimeout(() => deptMap.invalidateSize(), 300);
 
-        axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${encodeURIComponent(sqlDeptQuery)}`)
-            .then(function(response) {
-                const data = response.data.result.records;
+const deptMarkerLayer = L.markerClusterGroup ? L.markerClusterGroup() : L.layerGroup();
+deptMarkerLayer.addTo(deptMap);
 
-                // Process data for chart
-                const counts = d3.nest()
-                    .key(function(d) { return d.PD; })
-                    .rollup(function(v) { return v.length; })
-                    .entries(data)
-                    .map(function(d) { return { name: d.key, value: d.value }; });
+axios.get(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=${encodeURIComponent(sqlDeptQuery)}`)
+    .then(function(response) {
+        const data = response.data.result.records || [];
 
-                const chartData = counts.map(d => d.value);
-                const chartCategories = counts.map(d => d.name);
+        // Process data for chart
+        const counts = d3.nest()
+            .key(function(d) { return d.PD; })
+            .rollup(function(v) { return v.length; })
+            .entries(data)
+            .map(function(d) { return { name: d.key, value: d.value }; });
 
-                // Create ApexCharts line chart with stepline curve
-                var options = {
-                    series: [{
-                        name:'Total Number',
-                        data: chartData
-                    }],
-                    chart: {
-                        type: 'line',
-                        height: 350
-                    },
-                    stroke: {
-                        curve: 'stepline',
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    title: {
-                        align: 'left'
-                    },
-                    xaxis: {
-                        categories: chartCategories,
-                        title: {
-                            text: 'Location'
-                        }
-                    },
-                    yaxis: {
-                        title: {
-                            text: 'Count'
-                        }
-                    },
-                    markers: {
-                        hover: {
-                            sizeOffset: 4
-                        }
-                    }
-                };
+        const chartData = counts.map(d => d.value);
+        const chartCategories = counts.map(d => d.name);
 
-                var chart = new ApexCharts(document.querySelector("#chartDept"), options);
-                chart.render();
+        // Create ApexCharts line chart with stepline curve
+        const options = {
+            series: [{
+                name: 'Total Number',
+                data: chartData
+            }],
+            chart: {
+                type: 'line',
+                height: 350,
+                toolbar: { show: false },
+                foreColor: theme.muted
+            },
+            colors: [theme.accent],
+            stroke: {
+                curve: 'smooth',
+                width: 3
+            },
+            dataLabels: {
+                enabled: false
+            },
+            grid: {
+                borderColor: theme.grid
+            },
+            title: {
+                align: 'left',
+                style: {
+                    color: theme.text
+                }
+            },
+            xaxis: {
+                categories: chartCategories,
+                title: {
+                    text: 'Location',
+                    style: { color: theme.muted }
+                }
+            },
+            yaxis: {
+                title: {
+                    text: 'Count',
+                    style: { color: theme.muted }
+                }
+            },
+            markers: {
+                size: 4,
+                strokeColors: theme.accent,
+                hover: {
+                    sizeOffset: 4
+                }
+            }
+        };
 
-                // Map Visualization
-                var map = L.map('mapDept').setView([42.3601, -71.0589], 12);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
-                    maxZoom: 18,
-                }).addTo(map);
+        const chart = new ApexCharts(document.querySelector("#chartDept"), options);
+        chart.render();
 
-                var markers = L.markerClusterGroup().addTo(map);
+        data.forEach(function(row) {
+            const lat = parseFloat(row.Y);
+            const lon = parseFloat(row.X);
+            if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+                return;
+            }
+            const marker = L.marker([lat, lon]).bindPopup(
+                row.LOCNAME + '<br>Contact: ' + row.LOCCONTACT + '<br>Address: ' + row.LOCADDR
+            );
+            deptMarkerLayer.addLayer(marker);
+        });
 
-                data.forEach(function(row) {
-                    var marker = L.marker([row.Y, row.X]).bindPopup(
-                        row.LOCNAME + '<br>Contact: ' + row.LOCCONTACT + '<br>Address: ' + row.LOCADDR
-                    );
-                    markers.addLayer(marker);
-                });
+        // Highlight areas and count fire departments in each area
+        const areaCounts = d3.nest()
+            .key(function(d) { return d.PD; })
+            .rollup(function(leaves) { return leaves.length; })
+            .entries(data);
 
-                // Highlight areas and count fire departments in each area
-                var areaCounts = d3.nest()
-                    .key(function(d) { return d.PD; })
-                    .rollup(function(leaves) { return leaves.length; })
-                    .entries(data);
-
-                areaCounts.forEach(function(area) {
-                    var areaData = data.filter(function(d) { return d.PD === area.key; });
-                    var areaLat = d3.mean(areaData, function(d) { return +d.Y; });
-                    var areaLon = d3.mean(areaData, function(d) { return +d.X; });
-
-                    L.circleMarker([areaLat, areaLon], {
-                        radius: 10,
-                        color: 'blue',
-                        fillColor: 'blue',
-                        fillOpacity: 0.6
-                    }).bindPopup(area.key + '<br>Fire Departments: ' + area.value).addTo(map);
-                });
-            })
-            .catch(function(error) {
-                console.error('Error fetching data:', error);
+        areaCounts.forEach(function(area) {
+            const areaData = data.filter(function(d) { return d.PD === area.key; });
+            const areaPoints = areaData.filter(function(d) {
+                return Number.isFinite(+d.Y) && Number.isFinite(+d.X);
             });
+            if (!areaPoints.length) {
+                return;
+            }
+            const areaLat = d3.mean(areaPoints, function(d) { return +d.Y; });
+            const areaLon = d3.mean(areaPoints, function(d) { return +d.X; });
+
+            L.circleMarker([areaLat, areaLon], {
+                radius: 10,
+                color: theme.accent,
+                fillColor: theme.accent,
+                fillOpacity: 0.6
+            }).bindPopup(area.key + '<br>Fire Departments: ' + area.value).addTo(deptMap);
+        });
+    })
+    .catch(function(error) {
+        console.error('Error fetching data:', error);
+    });
 
 
 async function fetchFireHydrantData() {
@@ -433,32 +608,36 @@ async function fetchFireHydrantData() {
                     type: 'line',
                     zoom: {
                         enabled: false
-                    }
+                    },
+                    toolbar: { show: false },
+                    foreColor: theme.muted
                 },
+                colors: [theme.accent],
                 dataLabels: {
                     enabled: false
                 },
                 stroke: {
-                    curve: 'straight'
+                    curve: 'smooth',
+                    width: 3
                 },
                 title: {
-                    align: 'left'
+                    align: 'left',
+                    style: { color: theme.text }
                 },
                 grid: {
-                    row: {
-                        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                        opacity: 0.5
-                    },
+                    borderColor: theme.grid
                 },
                 xaxis: {
                     categories: years,
                     title: {
-                        text: 'Manufacture Year'
+                        text: 'Manufacture Year',
+                        style: { color: theme.muted }
                     }
                 },
                 yaxis: {
                     title: {
-                        text: 'Number of Fire Hydrants'
+                        text: 'Number of Fire Hydrants',
+                        style: { color: theme.muted }
                     }
                 }
             };
@@ -468,6 +647,3 @@ async function fetchFireHydrantData() {
         }
 
         renderChart();
-
-
-
