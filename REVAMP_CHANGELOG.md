@@ -1,0 +1,36 @@
+# Revamp Change Log
+
+## Unreleased
+- Initialized revamp tracking document.
+- Planned full visual redesign for index and About pages while keeping content updates.
+- Rebuilt `index.html` with new modern layout, sections, and typography.
+- Added `css/revamp.css` and wired it to `index.html` and `About.html`.
+- Rebuilt `About.html` to match the new visual system and updated layout.
+- Updated `PORTFOLIO_AUDIT.md` to reflect new landing and About page features.
+- Replaced legacy navigation/animations with a clean, modern single-page layout.
+- Lightened background palette and added a subtle yellow-green tint in `css/revamp.css`.
+- Added an experiment fullscreen modal and increased iframe height on `index.html`.
+- Added image tint overlay on project media for consistent presentation.
+- Refreshed Boston Fires UI in `Fire/styles.css` with modern typography, dark panels, and updated button styling.
+- Updated Boston Fires charts in `Fire/chart-script.js` with a new palette, grid styling, and modernized Chart.js/ApexCharts options.
+- Added typography imports to `Fire/BostonFires.html`.
+- Adjusted Boston Fires pie chart sizing for responsive layout in `Fire/BostonFires.html`.
+- Replaced Rules Engine project card with Virtual Classmate on `index.html`.
+- Opened Boston Fires project link in a new tab from `index.html`.
+- Lightened Boston Fires story background and card styling in `Fire/styles.css`.
+- Added a live incident map to `Fire/BostonFires.html` and `Fire/chart-script.js`.
+- Adjusted Boston Fires chart containers and canvas sizing to prevent pie chart auto-resizing.
+- Updated Boston Fires chart theme colors for a lighter story background.
+- Tuned Boston Fires header background to a subtle gradient to match the main site.
+- Updated Boston Fires incident highlight color for contrast on light background.
+- Increased Boston Fires chart and map heights for improved visibility.
+- Centered chart control buttons and updated quiz styling/questions.
+- Added map resize fixes to prevent blank Leaflet renders.
+- Increased fire department map height for consistency with other maps.
+- Fixed fire department map rendering by isolating map instances and guarding coordinate data.
+- Restored the Boston story photo frame styling and removed the heavy shadow.
+- Lightened the Boston Fires footer background to match the story palette.
+- Added Leaflet image sizing overrides to prevent blank map tiles.
+- Updated Boston Fires footer background and added glass styling to the header tagline.
+- Restyled the Boston story image frame with a modern white border and shadow.
+- Added the Fast Track project card to the portfolio.
